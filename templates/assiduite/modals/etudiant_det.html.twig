@@ -1,0 +1,118 @@
+<div class="modal" role="dialog" id="etudiant_det_modal" aria-modal="true" style="top:250px;"> 
+<div class="modal-dialog modal-md modal-facture" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Données Etudiants</h5>
+        </hr>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"> 
+        <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="new_facture-form">
+            <div class="col-md-12 row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="d_reglement" style="margin-top: 1rem;">Id_ Seance :</label>
+                                                <input type="text" class="form-control" name="montant_facture" id="montant_facture" value="" disabled>
+
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="montant_facture" style="margin-top: 1rem;">ID_Admission:</label>
+                        <input type="text" class="form-control" name="montant_facture" id="montant_facture" value="" disabled>
+                    </div>
+                </div> 
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="montant_provisoir" style="margin-top: 1rem;">Etudiant :</label>
+                        <input type="text" class="form-control" name="montant_provisoir" id="montant_provisoir" value="">
+                    </div>
+                </div> 
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="montant_devis" style="margin-top: 1rem;">Categorie SI:</label>
+                        <input type="text" class="form-control" name="montant_devis" id="montant_devis" value="">
+                    </div>
+                </div> 
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="montant" style="margin-top: 1rem;">Categorie_ens  :</label>
+                        <select class="form-control" name="banque" id="banque">
+                            <option value="">Choix Banque</option>
+                           
+                                <option value=""></option>
+                                <option value="AD">AD</option>
+                                <option value="BD">BD</option>
+                                <option value="PEE">PEE</option>
+                            
+                        </select>
+                    </div>
+                </div> 
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="banque">Heure Pointage :</label>
+                        <input type="text" class="form-control" name="montant_devis" id="montant_devis" value="">
+                      
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="paiement">motif Absence:</label>
+                        <select class="form-control" name="paiement" id="paiement">
+                        <option></option>
+       <option value="1">Convocation Administrative</option>
+        <option value="2">Exclusion Temporaire</option>
+        <option value="3">Maladie avec certificat</option>
+        <option value="4">Maladie sans certificat</option>
+        <option value="5">Problème de transport</option>
+        <option value="6">Raison familiale</option>
+        <option value="7">Sans excuses</option>
+        <option value="8">RDV médical</option>
+        <option value="9"></option>
+        <option value="10">RDV médical extérieur</option>
+        <option value="11">Retard</option>
+        <option value="12">Stage à l'étranger</option>
+        <option value="13">Module Capitalisé</option>
+        <option value="14">Exclusion Commission Disciplinaire</option>
+        <option value="15">Sanction Assiduité</option>
+        <option value="16">Autorisé</option>
+        <option value="17">Avis de Décès</option>
+        <option value="18">11ème Congrée National des Etudiant</option>
+        <option value="19">Evaluation Fin Stage</option>
+        <option value="20">Erreur Affectation Promotion</option>
+        <option value="21">Attente Visa</option>
+        <option value="22">Problème technique</option>
+        <option value="23">Convocation permis</option>
+        <option value="24">Maladie chronique</option>
+        <option value="25">Autorisée</option>
+        <option value="26">Non Autorisée</option>
+        <option value="27">ST Etranger</option>
+        <option value="28">Présent</option>
+                        </select>
+                    </div>
+                </div> 
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="reference">observation :</label>
+                        <textarea id="w3review" name="w3review" rows="4" cols="40"></textarea>
+                    </div>
+                </div> 
+                <div class="col-md-4">
+                      <label>  </label><br> 
+                      <input type="radio" name="organisme" id="organ" value="1" checked=""> 
+                      <label style="margin:5px" for="organ"> justifier </label>  
+                        
+                  </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" id="save_reglement"><i class="fas fa-check-circle"></i> Enregistre</button>
+            </div>
+        </form>
+      </div>
+
+
+    </div>
+  </div>
+</div>
