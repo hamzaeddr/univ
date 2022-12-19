@@ -1169,8 +1169,9 @@ public function pointeuse_user(Request $request, $idsalle)
         }
         $ret = $zk->connect();
         $zk->disableDevice();
-        $user_device = $zk->getAttendance($date);
+        // $user_device = $zk->getAttendance($date);
         // $user_device = $zk->getAttendance('2022-11-07');    
+        $user_device = $zk->getAttendance_date('2022-11-01','2022-11-30');    
         // dd(count($user_device));
         $users = "SELECT * FROM `userinfo`  WHERE street not like 'F%' ORDER BY `badgenumber` ASC";
         $users =  self::execute($users,$this->em);
