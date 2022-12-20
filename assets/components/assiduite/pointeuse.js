@@ -157,10 +157,11 @@ const Toast = Swal.mixin({
   ///////////////download_pointeuse//////////
 
   $("#download_pointeuse").on("click", function () {
+    var date = $("#datetime_pointeuse").val();
     list_pointeuse.forEach((obj) => {
       $.ajax({
         type: "POST",
-        url: "/api/pointeuse_download/" + obj.ip,
+        url: "/api/pointeuse_download/" + obj.ip + "/" + date,
         success: function (html) {
           
           Toast.fire({
