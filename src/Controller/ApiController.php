@@ -1118,11 +1118,11 @@ public function pointeuse_connect(Request $request, $idsalle)
     
 }
 
-#[Route('/pointeuse_download/{idsalle}', name: 'pointeuse_download')]
-public function pointeuse_download(Request $request, $idsalle)
+#[Route('/pointeuse_download/{idsalle}/{date}', name: 'pointeuse_download')]
+public function pointeuse_download(Request $request, $idsalle,$date)
 {  
    
-    $data = self::pointeuse_ip($idsalle,'import','2022-11-14',$this->em);
+    $data = self::pointeuse_ip($idsalle,'import',$date,$this->em);
     
     return new JsonResponse('ok');
    
@@ -1171,7 +1171,7 @@ public function pointeuse_user(Request $request, $idsalle)
         $zk->disableDevice();
         // $user_device = $zk->getAttendance($date);
         // $user_device = $zk->getAttendance('2022-11-07');    
-        $user_device = $zk->getAttendance_date('2022-11-01','2022-11-30');    
+        $user_device = $zk->getAttendance_date($date,$date);    
         // dd(count($user_device));
         $users = "SELECT * FROM `userinfo`  WHERE street not like 'F%' ORDER BY `badgenumber` ASC";
         $users =  self::execute($users,$this->em);
@@ -1561,11 +1561,47 @@ $count = $count + 1;
         }
         }
         else {
-            // $data = self::pointeuse_insert($salle,$date,$em);
+            $zk = new \ZKLib("$salle", 4370, "udp");
 
+            if ($zk->connect() == 'true') {
+                $statut = "device connected";
+                $ret = $zk->connect();
+                $sn = $zk->serialNumber();
+                $zk->disableDevice();
+                    $attendance = $zk->getAttendance($date);
+                    // $attendance = $zk->getAttendance_date($date,$date);
+                    if (count($attendance) > 0) {
+                        $attendance = array_reverse($attendance, true);
+                        foreach ($attendance as $attItem) {
+                        $user = $em->getRepository(Userinfo::class)->findOneBy(['Badgenumber'=>$attItem['id']]);
+                        if ($user) {
+                            $date_ = new \DateTime($attItem["timestamp"]);
+                            // $check = $this->em->getRepository(checkinout::class)->findBy(['USERID'=>$user->getUSERID(), 'CHECKTIME' => $date]);
+                               $checkinout = new Checkinout;
+                               $checkinout->setUSERID($user->getUSERID());
+                               $checkinout->setSn($sn);
+                               $checkinout->setCHECKTIME($date_);
+                               $checkinout->setMemoinfo("test4");
+                               $em->persist($checkinout);
+                
+                
+                          
+                        }
+                    }
+                        $em->flush();
+                        $statut = "insert avec success";
+            
+                  
+                    }
+            }
+            else {
+                $statut = "device is not connected.";
+        
+            }
+           
         }
         
-        return $data;
+        return $statut;
 
     }
 
