@@ -254,6 +254,56 @@ $result = $newstmt->fetchAll();
         ]);
       
     }
+    
+    #[Route('/salle/{sall}', name: 'salle')]
+    public function salle(Request $request,$sall): Response
+    {
+         //     $hour = date('H:i:s');
+    //  $hour = '2021-10-07';
+    //     $date = date('Y-m-d');
+    $Today= new \DateTime(); 
+    $date =  $Today->format('Y-m-d');
+    $hour = $Today->format('H:i:s');  
+    // $date = '14:50:00';
+     $salleinf="SELECT * FROM psalles where abreviation='$sall'";
+     $stmts= $this->em->getConnection()->prepare($salleinf);
+     $stmts = $stmts->executeQuery();    
+     $seans = $stmts->fetchAll();
+     foreach($seans as $sa){
+
+       //  dd($sa->code);
+       $code = $sa['code'];
+         $salle="SELECT * FROM xseance_absences
+         INNER JOIN xseance ON xseance.ID_Séance=xseance_absences.ID_Séance
+         WHERE xseance.Date_Séance='$date' AND xseance.ID_Salle='$code' AND '$hour' BETWEEN xseance.Heure_Debut 
+         AND xseance.Heure_Fin ORDER BY xseance_absences.Nom ASC";
+         $stmt = $this->em->getConnection()->prepare($salle);
+         $stmt = $stmt->executeQuery();    
+         $sean = $stmt->fetchAll();
+         $salle_="SELECT * FROM xseance_absences
+         INNER JOIN xseance ON xseance.ID_Séance=xseance_absences.ID_Séance
+         WHERE xseance.Date_Séance='$date' AND xseance.ID_Salle='$code' AND '$hour' BETWEEN xseance.Heure_Debut AND xseance.Heure_Fin ORDER BY xseance_absences.Nom DESC";
+         $stmt_ = $this->em->getConnection()->prepare($salle_);
+         $stmt_ = $stmt_->executeQuery();    
+         $sean_ = $stmt_->fetchAll();
+         
+
+
+     }
+
+
+
+    
+   
+   
+    
+
+
+     return $this->render('assiduite/salle.html.twig', [
+ "salle" =>$sean,
+ "sallee" =>$sean_ ]); 
+      
+    }
 
     
 #[Route('/pdf_presentiel/{etudiant}', name: 'pdf_presentiel')]
