@@ -1136,10 +1136,11 @@ public function parlot(Request $request)
   
         $hd = $request->request->get('hd');  
         $hf = $request->request->get('hf'); 
+        $date = $request->request->get('date'); 
 
-        $TodayDate= new \DateTime(); 
+        // $TodayDate= new \DateTime(); 
         // $date= date_format($TodayDate, 'Y-m-d');
-        $date = '2022-10-03';
+        // $date = '2022-10-03';
         $requete="SELECT v_seance.code_seance as cod,TIME_FORMAT(v_seance.heure_debut, '%H:%i') AS heur_db , TIME_FORMAT(v_seance.heure_fin, '%H:%i') AS heur_fin,ac_etablissement.abreviation as eta ,ac_formation.abreviation as form ,ac_promotion.designation as pro ,v_seance.groupe, psalles.abreviation AS salle, ac_module.designation as module1, ac_element.designation as element, penseignant.nom, penseignant.prenom,xseance.ID_Séance as exis
         FROM v_seance
         LEFT JOIN xseance ON xseance.ID_Séance=v_seance.code_seance
