@@ -54,8 +54,8 @@ $(document).ready(function () {
               type: "POST",
               url: "/api/etud_aff_situation/" + var1,
               success: function (html) {
-          $(".loader").hide();
-          $("#Et_situation").html(html);   
+              $(".loader").hide();
+              $("#Et_situation").html(html);   
             
               },
             });
@@ -268,11 +268,14 @@ console.log(list);
   });
 ////////////////////////////////:: traitement ////////////////////////////////////:
   $("body #traite_epreuve").on("click", function () {
+
     list.forEach((obj) => {
       if (obj.groupe === "") {
         obj.groupe = "empty";
       }
       if ( obj.statut != '1'){
+      $(".loader").show();
+
       $.ajax({
         type: "POST",
         url: "/api/traitement_assiduite",
@@ -287,6 +290,8 @@ console.log(list);
           type : 'traite',
         },
         success: function (html) {
+        $(".loader").hide();
+
           seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
           Toast.fire({
             icon: 'success',
@@ -746,8 +751,130 @@ $("body #parlot_traiter").on("click", async function () {
            
 
             });        
-  // 
+  //////////////////////////etudiant details ////////////////////////////////////////////
 
+  $("body #dtDynamicVerticalScrollExample2").on("dblclick", "tr", function () {
+   
+    // alert(statut);
+     list.forEach((obj) => {
+    
+       if (obj.statut == 1) {
+        $("#etudiant_det_modal").modal("toggle");
+        $("#etudiant_det_modal").modal("show");
+        var row_etudiant = $(this).closest("tr");
+        var id_etudiant = row_etudiant.find("td:eq(0)").html();
+        $.ajax({
+          type: "POST",
+          url: "/api/Etud_details",
+          data: {
+            etudiant: id_etudiant,
+            seance: obj.seance
+            
+          },
+          success: function (html) {
+            $('#modal_etud_det').html(html);
+          
+          },
+        });
+       }
+
+     
+     
+    });
+  });
+
+
+  //////////////////////////valider etudiant details ////////////////////////////////////////////
+
+  $("body #save_etud_det").on("click", function () {
+    let justif = 0;
+    if ($('input.justifier').is(':checked')) {
+      justif = 1;
+
+    }
+
+    $.ajax({
+      type: "POST",
+      url: "/api/Etud_details_valide",
+      data: {
+        etudiant: $('#ID_Admission').val(),
+        seance: $('#Id_Seance').val(),
+        cat_ens: $('#Categorie_ens').val(),
+        motif_abs: $('#motif_abs').val(),
+        obs: $('#obs').val(),
+        justif: justif,
+        
+      },
+      success: function (html) {
+        list.forEach((obj) => {
+          $.ajax({
+            type: "POST",
+            url: "/api/Etud_aff",
+            data: {
+              promotion: obj.promotion,
+              seance: obj.seance,
+              groupe: obj.groupe,
+              existe: obj.existe,
+            },
+            success: function (html) {
+              if ($.fn.DataTable.isDataTable("#dtDynamicVerticalScrollExample2")) {
+                $("#dtDynamicVerticalScrollExample2").DataTable().clear().destroy();
+              }
+              $("#dtDynamicVerticalScrollExample2")
+                .html(html)
+                .DataTable({
+                  bLengthChange: false,
+                  lengthMenu: [
+                    [25, 50, 75, 100, 125, 20000000000000],
+                    [10, 15, 25, 50, 100, "All"],
+                  ],
+                });
+            },
+          });
+        });
+        $("#etudiant_det_modal").modal("toggle");
+        $("#etudiant_det_modal").modal("hide");
+      
+      },
+    });
+  });
+
+  //////////////////////////Pointage ////////////////////////////////////////////
+
+  $("body #pointage").on("click", function () {
+
+list.forEach((obj) => {
+  if (obj.statut == 1) {
+
+$.ajax({
+  type: "POST",
+  url: "/api/Etud_pointage",
+  data: {
+    promo: $('#promotion').val(),
+    date: $('#datetime').val(),
+    hd: obj.hd,
+  },
+  success: function (html) {
+    if ($.fn.DataTable.isDataTable("#dtDynamicVerticalScrollExample4")) {
+      $("#dtDynamicVerticalScrollExample4").DataTable().clear().destroy();
+    }
+    $("#dtDynamicVerticalScrollExample4")
+      .html(html)
+      .DataTable({
+        bLengthChange: false,
+        lengthMenu: [
+          [25, 50, 75, 100, 125, 20000000000000],
+          [10, 15, 25, 50, 100, "All"],
+        ],
+      });
+  },
+});
+}
+  });
+  });
+
+
+  ///////////////////////////////////////////////////////////////////////////////////////
 
 $('#E_situation').select2();
 $('#F_situation').select2();

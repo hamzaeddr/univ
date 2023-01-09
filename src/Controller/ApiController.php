@@ -32,6 +32,7 @@ use App\Entity\PSalles;
 use App\Entity\Userinfo;
 use App\Entity\XseanceAbsences;
 use App\Entity\XseanceCapitaliser;
+use App\Entity\XseanceMotifAbs;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Request;
@@ -762,7 +763,7 @@ return $requete;
 
     if ($existe == '0') {
 
-        $requete = "SELECT `code_admission`,CONCAT(`nom`,' ',`prenom`) as name,'' as Pointage,'' as cat,'' as cat_ens
+        $requete = "SELECT `code_admission`,CONCAT(`nom`,' ',`prenom`) as name,'' as Pointage,'' as cat,'' as cat_ens,'' as cat_ens,'' as cat_re,'' as cat_f
         FROM `x_inscription_grp` WHERE x_inscription_grp.promotion='$promotion' $concatenation";
     
     }
@@ -781,7 +782,92 @@ return $requete;
 
  }
  }
+//------------------------------------------------------etuddetails----------------------------------------------------------------------
+#[Route('/Etud_details', name: 'Etud_details')]
+ public function Etud_details(Request $request)
+    
+    
+ { 
+    if($request->isXmlHttpRequest()) {
+        $seance = $request->request->get('seance');  
+        $etudiant = $request->request->get('etudiant');  
+        $xseance_abs = $this->em->getRepository(XseanceAbsences::class)->findBy(['ID_Séance'=>$seance,'ID_Admission'=>$etudiant]);
+        // dd($xseance_abs[0]->getMotif());
+        $xseance_motif = $this->em->getRepository(XseanceMotifAbs::class)->findBy(['id'=>$xseance_abs[0]->getMotif()]);
+        // dd($xseance_abs);
+        $html = $this->render('assiduite/modals/etud_det_cont.html.twig', [
+            'etudiants' => $xseance_abs,
+            'xseance_motif' => $xseance_motif,
 
+       ])->getContent();
+       return new JsonResponse($html);
+   
+    }
+ }
+//------------------------------------------------------etuddetails----------------------------------------------------------------------
+#[Route('/Etud_details_valide', name: 'Etud_details_valide')]
+ public function Etud_details_valide(Request $request)
+    
+    
+ { 
+    if($request->isXmlHttpRequest()) {
+        $seance = $request->request->get('seance');  
+        $etudiant = $request->request->get('etudiant');  
+        $categorie_ens = $request->request->get('cat_ens');  
+        $motif = $request->request->get('motif_abs');  
+        $obs = $request->request->get('obs');  
+        $justif = $request->request->get('justif');  
+        $xseance_abs = $this->em->getRepository(XseanceAbsences::class)->findOneBy(['ID_Séance'=>$seance,'ID_Admission'=>$etudiant]);
+        $xseance_abs->setCategorieEnseig($categorie_ens);
+        $xseance_abs->setObs($obs);
+        $xseance_abs->setJustifier($justif);
+        $xseance_abs->setMotif($motif);
+        $this->em->persist($xseance_abs);
+    
+        $this->em->flush();
+    
+        
+       return new JsonResponse('ok');
+   
+    }
+ }
+//------------------------------------------------------etuddetails----------------------------------------------------------------------
+#[Route('/Etud_pointage', name: 'Etud_pointage')]
+ public function Etud_pointage(Request $request)
+    
+    
+ { 
+    if($request->isXmlHttpRequest()) {
+        $promo = $request->request->get('promo');  
+        $date = $request->request->get('date');  
+        $hd = $request->request->get('hd'); 
+        $datef = "$date $hd";
+        $hd1 = date('Y-m-d H:i:s', strtotime($datef. ' -15 minutes')); 
+        $hd2 = date('Y-m-d H:i:s', strtotime($datef. ' +45 minutes'));
+      
+       
+        $query = "SELECT x_inscription_grp.code_admission,userinfo.userid, CONCAT(x_inscription_grp.nom,x_inscription_grp.prenom) as name,
+                  checkinout.checktime,checkinout.sn
+          FROM `userinfo` 
+                    INNER JOIN checkinout ON userinfo.userid=checkinout.userid
+                    INNER JOIN x_inscription_grp ON x_inscription_grp.code_admission=userinfo.street
+                    WHERE x_inscription_grp.promotion=$promo  AND checkinout.checktime BETWEEN '$hd1' AND '$hd2'";
+                
+       $pointages =  self::execute($query,$this->em);
+       $query_s = "SELECT iseance_salle.id_pointeuse,psalles.abreviation FROM
+                  `psalles` INNER JOIN iseance_salle ON iseance_salle.code_salle=psalles.code";
+       $salles =  self::execute($query_s,$this->em);
+    
+        
+       $html = $this->render('assiduite/table/datatable_pointage.html.twig', [
+        'salles' => $salles,
+        'pointages' => $pointages,
+
+   ])->getContent();
+   return new JsonResponse($html);
+   
+    }
+ }
  //{#---------------------------------------------------------------------------------------------------------------------------------#}   
  
  
@@ -1159,7 +1245,8 @@ public function pointeuse_user(Request $request, $idsalle)
         ini_set('memory_limit', '2G'); // or you could use 1G
 
 
-        $zk = new \ZKLib($idsalle, 4370, 'udp');
+        // $zk = new \ZKLib($idsalle, 4370, 'udp');
+        $zk = new \ZKLib('172.20.7.208', 4370, 'udp');
         if ($zk->connect() == 'true') {
             $statut = "device connected";
         }
@@ -1171,9 +1258,20 @@ public function pointeuse_user(Request $request, $idsalle)
         $zk->disableDevice();
         // $user_device = $zk->getAttendance($date);
         // $user_device = $zk->getAttendance('2022-11-07');    
-        $user_device = $zk->getAttendance_date($date,$date);    
+        $user_device = $zk->getAttendance_date($date,$date); 
+        if (count($user_device) > 0) {
+            $user_device = $zk->getAttendance_date($date,$date); 
+
+        }
+        else{
+        $user_device = ""; 
+
+        }
+
         // dd(count($user_device));
-        $users = "SELECT * FROM `userinfo`  WHERE street not like 'F%' ORDER BY `badgenumber` ASC";
+        $users = "SELECT * FROM `userinfo`  
+         ORDER BY `badgenumber` ASC";
+        // WHERE street not like 'F%' ORDER BY `badgenumber` ASC";
         $users =  self::execute($users,$this->em);
         $html = $this->render('assiduite/table/datatable_pointeuse_att.html.twig', [
             'users' => $users,
@@ -1193,42 +1291,48 @@ public function pointeuse_user(Request $request, $idsalle)
     $pointage =  self::execute($requete,$em);
     // $date = date('Y-m-d', strtotime('-1 day', strtotime($pointage[0]['date'])));
     // dd($pointage[0]['date']);
+   
     $zk = new \ZKLib("$idsalle", 4370, "udp");
 
     if ($zk->connect() == 'true') {
-        $statut = "device connected";
-        $ret = $zk->connect();
-        $zk->disableDevice();
-            $attendance = $zk->getAttendance($date);
+                $statut = "device connected";
+                    $ret = $zk->connect();
+                    $zk->disableDevice();
+                        $attendance = $zk->getAttendance($date);
             // $attendance = $zk->getAttendance_date($date,$date);
-            if (count($attendance) > 0) {
-                $attendance = array_reverse($attendance, true);
-                foreach ($attendance as $attItem) {
-                $user = $em->getRepository(Userinfo::class)->findOneBy(['Badgenumber'=>$attItem['id']]);
-                if ($user) {
-                    $date_ = new \DateTime($attItem["timestamp"]);
-                    // $check = $this->em->getRepository(checkinout::class)->findBy(['USERID'=>$user->getUSERID(), 'CHECKTIME' => $date]);
-                       $checkinout = new Checkinout;
-                       $checkinout->setUSERID($user->getUSERID());
-                       $checkinout->setSn($sn);
-                       $checkinout->setCHECKTIME($date_);
-                       $checkinout->setMemoinfo("test4");
-                       $em->persist($checkinout);
-        
-        
-                  
-                }
-            }
-                $em->flush();
-                $statut = "insert avec success";
-    
-          
-            }
-    }
-    else {
-        $statut = "device is not connected";
+                    // if (count($attendance) > 0) {
+                    //     $attendance = array_reverse($attendance, true);
+                    //     foreach ($attendance as $attItem) {
+                    //     $user = $em->getRepository(Userinfo::class)->findOneBy(['Badgenumber'=>$attItem['id']]);
+                    //     if ($user) {
+                    //         $date_ = new \DateTime($attItem["timestamp"]);
+                    //         // $check = $this->em->getRepository(checkinout::class)->findBy(['USERID'=>$user->getUSERID(), 'CHECKTIME' => $date]);
+                    //         $checkinout = new Checkinout;
+                    //         $checkinout->setUSERID($user->getUSERID());
+                    //         $checkinout->setSn($sn);
+                    //         $checkinout->setCHECKTIME($date_);
+                    //         $checkinout->setMemoinfo("test4");
+                    //         $em->persist($checkinout);
+                
+                
+                        
+                    //     }
+                    // }
+                    //     $em->flush();
+            
+                
+                    // }
+            $statut = "'".$idsalle."'device is connected";
 
-    }
+        }
+        else {
+            // array_push($pointeuse_status, ["eta" => "'".$idsalle."'device is not connected"]);
+
+            $statut = "'".$idsalle."'device is not connected";
+
+        }
+        // dd($pointeuse_status);
+        
    
        
 
@@ -1549,18 +1653,27 @@ $count = $count + 1;
     static function pointeuse_ip($salle,$type,$date,$em)
     {  
         if ($type == 'traite') {
-        $requete = "SELECT distinct iseance_salle.code_salle,psalles.designation,machines.sn,machines.IP 
-        FROM `psalles` 
-        INNER JOIN iseance_salle ON iseance_salle.code_salle=psalles.code 
-        INNER JOIN machines ON iseance_salle.id_pointeuse=machines.sn where psalles.code='$salle'";
-        $ip =  self::execute($requete,$em);
-        foreach ($ip as $ips) {
-            $data = self::pointeuse_insert($ips['IP'],$ips['sn'],$date,$em);
-
+            // dd('traiter');   
+            $pointeuse_status = [];
+            
+            $requete = "SELECT distinct iseance_salle.code_salle,psalles.designation,machines.sn,machines.IP 
+            FROM `psalles` 
+            INNER JOIN iseance_salle ON iseance_salle.code_salle=psalles.code 
+            INNER JOIN machines ON iseance_salle.id_pointeuse=machines.sn
+            where machines.IP  in  ('172.20.10.2','172.20.10.3','172.20.10.4','172.20.10.5','172.20.10.6','172.20.10.7'
+                        ,'172.20.10.8','172.20.10.9','172.20.10.10','172.20.10.11','172.20.10.12','172.20.10.13','172.20.10.14')";
+            // --  where psalles.code='$salle'";
+            $ip =  self::execute($requete,$em);
+            foreach ($ip as $ips) {
+                $data = self::pointeuse_insert($ips['IP'],$ips['sn'],$date,$em);
+                array_push($pointeuse_status, ["eta" => $data]);
 
         }
+        dd($pointeuse_status);
         }
         else {
+            dd('else');
+
             $zk = new \ZKLib("$salle", 4370, "udp");
 
             if ($zk->connect() == 'true') {
@@ -1601,7 +1714,7 @@ $count = $count + 1;
            
         }
         
-        return $statut;
+        return $type;
 
     }
 
