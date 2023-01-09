@@ -564,12 +564,14 @@ $("body #parlot_search").on("click", function () {
     
   var hd = $("#hd").val();
   var hf = $("#hf").val();
+  var date = $("#datetime").val();
   $.ajax({
     type: "POST",
     url: "/api/parlot",
     data: {
       hd: hd,
       hf: hf,
+      date: date,
      
     },
     success: function (html) {
