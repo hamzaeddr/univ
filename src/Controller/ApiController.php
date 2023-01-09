@@ -821,7 +821,7 @@ return $requete;
         $xseance_abs->setCategorieEnseig($categorie_ens);
         $xseance_abs->setObs($obs);
         $xseance_abs->setJustifier($justif);
-        $xseance_abs->setMotif($motif);
+        $xseance_abs->setMotif((int) $motif);
         $this->em->persist($xseance_abs);
     
         $this->em->flush();
@@ -1669,7 +1669,7 @@ $count = $count + 1;
                 array_push($pointeuse_status, ["eta" => $data]);
 
         }
-        dd($pointeuse_status);
+        // dd($pointeuse_status);
         }
         else {
             dd('else');
