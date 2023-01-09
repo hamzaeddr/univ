@@ -1661,8 +1661,10 @@ $count = $count + 1;
             FROM `psalles` 
             INNER JOIN iseance_salle ON iseance_salle.code_salle=psalles.code 
             INNER JOIN machines ON iseance_salle.id_pointeuse=machines.sn
-            where machines.IP  in  ('172.20.10.2','172.20.10.3','172.20.10.4','172.20.10.5','172.20.10.6','172.20.10.7'
-                        ,'172.20.10.8','172.20.10.9','172.20.10.10','172.20.10.11','172.20.10.12','172.20.10.13','172.20.10.14')";
+             where psalles.code='$salle'";
+
+            // where machines.IP  in  ('172.20.10.2','172.20.10.3','172.20.10.4','172.20.10.5','172.20.10.6','172.20.10.7'
+            //             ,'172.20.10.8','172.20.10.9','172.20.10.10','172.20.10.11','172.20.10.12','172.20.10.13','172.20.10.14')";
             // --  where psalles.code='$salle'";
             $ip =  self::execute($requete,$em);
             foreach ($ip as $ips) {
