@@ -31,7 +31,7 @@ class AssiduiteController extends AbstractController
     #[Route('/', name: 'assiduite_assiduites_index')]
     public function index(Request $request): Response
     {
-        $operations = ApiController::check($this->getUser(), 'assiduite_assiduites_index', $this->em, $request);
+         $operations = ApiController::check($this->getUser(), 'assiduite_assiduites_index', $this->em, $request);
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }
