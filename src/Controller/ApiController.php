@@ -562,7 +562,7 @@ return $requete;
     
     
     $attendace = $zk->getAttendance('2022-11-01');
-    dd($attendace);
+    // dd($attendace);
     foreach ($attendace as $attendancedata ){
                                         $sqluser="SELECT userinfo.USERID,userinfo.USERID as exis
                                         from userinfo where Badgenumber='$attendancedata[1]' limit 1";
@@ -1672,7 +1672,7 @@ $count = $count + 1;
         // dd($pointeuse_status);
         }
         else {
-            dd('else');
+            // dd('else');
 
             $zk = new \ZKLib("$salle", 4370, "udp");
 
