@@ -1284,63 +1284,6 @@ public function pointeuse_user(Request $request, $idsalle)
     }
 
 
-// #[Route('/pointeuse_insert/{idsalle}/{date}', name: 'pointeuse_insert')]
-    static function pointeuse_insert($idsalle,$sn,$date,$em)
-    {  
-        // set_time_limit(1500);   
-    $requete= "SELECT DATE_FORMAT(checktime, '%Y-%m-%d') as date FROM `checkinout` WHERE sn='$sn' ORDER BY `checkinout`.`checktime` DESC LIMIT 1";
-    $pointage =  self::execute($requete,$em);
-    // $date = date('Y-m-d', strtotime('-1 day', strtotime($pointage[0]['date'])));
-    // dd($pointage[0]['date']);
-   
-    $zk = new \ZKLib("$idsalle", 4370, "udp");
-
-    if ($zk->connect() == 'true') {
-                $statut = "device connected";
-                    $ret = $zk->connect();
-                    $zk->disableDevice();
-                        $attendance = $zk->getAttendance($date);
-            // $attendance = $zk->getAttendance_date($date,$date);
-                    // if (count($attendance) > 0) {
-                    //     $attendance = array_reverse($attendance, true);
-                    //     foreach ($attendance as $attItem) {
-                    //     $user = $em->getRepository(Userinfo::class)->findOneBy(['Badgenumber'=>$attItem['id']]);
-                    //     if ($user) {
-                    //         $date_ = new \DateTime($attItem["timestamp"]);
-                    //         // $check = $this->em->getRepository(checkinout::class)->findBy(['USERID'=>$user->getUSERID(), 'CHECKTIME' => $date]);
-                    //         $checkinout = new Checkinout;
-                    //         $checkinout->setUSERID($user->getUSERID());
-                    //         $checkinout->setSn($sn);
-                    //         $checkinout->setCHECKTIME($date_);
-                    //         $checkinout->setMemoinfo("test4");
-                    //         $em->persist($checkinout);
-                
-                
-                        
-                    //     }
-                    // }
-                    //     $em->flush();
-            
-                
-                    // }
-            $statut = "'".$idsalle."'device is connected";
-
-        }
-        else {
-            // array_push($pointeuse_status, ["eta" => "'".$idsalle."'device is not connected"]);
-
-            $statut = "'".$idsalle."'device is not connected";
-
-        }
-        // dd($pointeuse_status);
-        
-   
-       
-
-    return $statut; 
-
-   
-    }
 
     #[Route('/aff_situation', name: 'aff_situation')]
     public function aff_situation(Request $request)
@@ -1649,6 +1592,64 @@ $count = $count + 1;
 
     }
   
+// #[Route('/pointeuse_insert/{idsalle}/{date}', name: 'pointeuse_insert')]
+static function pointeuse_insert($idsalle,$sn,$date,$em)
+{  
+    // set_time_limit(1500);   
+// $requete= "SELECT DATE_FORMAT(checktime, '%Y-%m-%d') as date FROM `checkinout` WHERE sn='$sn' 
+// ORDER BY `checkinout`.`checktime` DESC LIMIT 1";
+// $pointage =  self::execute($requete,$em);
+// $date = date('Y-m-d', strtotime('-1 day', strtotime($pointage[0]['date'])));
+// dd($pointage[0]['date']);
+
+$zk = new \ZKLib("$idsalle", 4370, "udp");
+
+if ($zk->connect() == 'true') {
+            $statut = "device connected";
+                $ret = $zk->connect();
+                $zk->disableDevice();
+                    $attendance = $zk->getAttendance($date);
+                // $attendance = $zk->getAttendance_date($date,$date);
+                if (count($attendance) > 0) {
+                    $attendance = array_reverse($attendance, true);
+                    foreach ($attendance as $attItem) {
+                    $user = $em->getRepository(Userinfo::class)->findOneBy(['Badgenumber'=>$attItem['id']]);
+                    if ($user) {
+                        $date_ = new \DateTime($attItem["timestamp"]);
+                        // $check = $this->em->getRepository(checkinout::class)->findBy(['USERID'=>$user->getUSERID(), 'CHECKTIME' => $date]);
+                        $checkinout = new Checkinout;
+                        $checkinout->setUSERID($user->getUSERID());
+                        $checkinout->setSn($sn);
+                        $checkinout->setCHECKTIME($date_);
+                        $checkinout->setMemoinfo("test4");
+                        $em->persist($checkinout);
+            
+            
+                    
+                    }
+                }
+                    $em->flush();
+        
+            
+                }
+        $statut = "'".$idsalle."'device is connected";
+
+    }
+    else {
+        // array_push($pointeuse_status, ["eta" => "'".$idsalle."'device is not connected"]);
+
+        $statut = "'".$idsalle."'device is not connected";
+
+    }
+    // dd($pointeuse_status);
+    
+
+   
+
+return $statut; 
+
+
+}
 
     // #[Route('/pointeu_ip/{salle}/{type}/{date}', name: 'pointeuse_ip')]
     static function pointeuse_ip($salle,$type,$date,$em)
@@ -1669,7 +1670,7 @@ $count = $count + 1;
             $ip =  self::execute($requete,$em);
             foreach ($ip as $ips) {
                 $data = self::pointeuse_insert($ips['IP'],$ips['sn'],$date,$em);
-                array_push($pointeuse_status, ["eta" => $data]);
+                // array_push($pointeuse_status, ["eta" => $data]);
 
         }
         // dd($pointeuse_status);
