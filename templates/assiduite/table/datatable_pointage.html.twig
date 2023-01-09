@@ -21,13 +21,22 @@
                 <td>{{etud.code_admission}}</td>
                 <td>{{etud.userid}}</td>
                 <td>{{etud.name}}</td>  
+
+    {% set exist = 0 %}
    {% for sal in salles %}
+    {% set exist = 1 %}
 
    {% if sal.id_pointeuse == etud.sn %}
                 
                 <td>{{sal.abreviation}}</td>
    {% endif %}         
     {% endfor %}
+   {% if exist == 0 %}
+                <td>undefined</td>
+
+   {% endif %}         
+
+
 
                 <td>{{etud.checktime | date('H:i')}}</td>
                
