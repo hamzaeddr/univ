@@ -169,7 +169,7 @@ font-size:12px;
           <td>{{et.Date_Séance}}</td>
         <td style="text-align:center;">{{et.hd}}</td>
                 <td style="text-align:center;">{{et.hf}}</td>
-                <td style="text-align:center;">{{ et.volume }}</td>
+                <td style="text-align:center;">{{ et.volume|round(1, 'floor') }}</td>
            {% if (et.Categorie == "D" or et.Categorie == "C") and et.Categorie_Enseig == "Z" %}
 
                 <td style="text-align:center;">{{et.Categorie_Enseig}}</td>
