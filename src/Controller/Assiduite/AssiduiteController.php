@@ -312,7 +312,7 @@ public function pdf_presentiel($etudiant)
     ini_set("pcre.backtrack_limit", "50000000");
 
     // $semester = $_GET['sem'];
-    $semester = 1;
+    $semester = 1;  
     // $idadm = $_GET['idadm'];
     $idadm = $etudiant;
     // $idadm = 'ADM-FMA_MG00005097';
@@ -345,15 +345,17 @@ else {
     $seanelements =  ApiController::execute($elements,$this->em);
 
 
-    $mysql="SELECT xseance.ID_Séance,semaine.nsemaine as Semaine,semaine.date_debut as DateD,semaine.date_fin as DateF,pnature_epreuve.abreviation,xseance.ID_Module as module,xseance.ID_Element as element,
-      TIME_FORMAT(xseance.Heure_Debut, '%H:%i') as hd,TIME_FORMAT(xseance.Heure_Fin, '%H:%i') as hf,xseance.Date_Séance,time_to_sec(timediff(xseance.Heure_Fin, 
-      xseance.Heure_Debut )) / 3600 as volume,xseance_absences.Categorie,xseance_absences.Categorie_Enseig 
-      FROM xseance LEFT JOIN semaine ON xseance.semaine= semaine.id LEFT JOIN xseance_absences ON xseance.ID_Séance=xseance_absences.ID_Séance 
-      LEFT JOIN pnature_epreuve ON pnature_epreuve.code=xseance.TypeSéance 
+    $mysql="SELECT xseance.ID_Séance,semaine.nsemaine as Semaine,semaine.date_debut as DateD,semaine.date_fin as DateF,pnature_epreuve.abreviation, 
+    TIME_FORMAT(xseance.Heure_Debut, '%H:%i') as hd,TIME_FORMAT(xseance.Heure_Fin, '%H:%i') as hf,xseance.Date_Séance,time_to_sec(timediff(xseance.Heure_Fin,  
+    xseance.Heure_Debut )) / 3600 as volume,xseance_absences.Categorie,xseance_absences.Categorie_Enseig ,v_seance.module_des as module,v_seance.element_des as element
+    FROM xseance LEFT JOIN semaine ON xseance.semaine= semaine.id
+    LEFT JOIN xseance_absences ON xseance.ID_Séance=xseance_absences.ID_Séance 
+    LEFT JOIN pnature_epreuve ON pnature_epreuve.code=xseance.TypeSéance 
+    INNER JOIN v_seance       ON v_seance.code_seance=xseance.id_séance
       WHERE xseance_absences.ID_Admission='$idadm' AND semaine.annee_s='2022/2023' 
       AND xseance.Date_Séance>='$dated' AND xseance.Date_Séance<='$date' AND (xseance.annulée is Null or xseance.annulée=0) ORDER BY xseance.Date_Séance";
 
-   
+//    dd($mysql);
       
         $sean =  ApiController::execute($mysql,$this->em);
 

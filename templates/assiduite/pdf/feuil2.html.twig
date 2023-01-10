@@ -138,7 +138,7 @@ font-size:12px;
                                         </tr>
     </thead>
     <tbody>
-                    {% set semain = 0 %}                                            
+                    {# {% set semain = 0 %}   #}                                         
                     {% for et in etud %}
                         {% if et.Semaine != semain %}
                         <tr style="background:lightgrey; text-align:center;letter-spacing:1.5px;">
@@ -146,30 +146,30 @@ font-size:12px;
     </tr>
                     {% set semain = et.Semaine %}
                     {% endif %}
-                    <tr>
+                    <tr> 
                          
                    
       
      
         <td >{{et.ID_Séance}} </td>
         <td >{{et.abreviation}}</td>
-         {% for el in modules %}
-         {% if el.code == et.module %}
-        <td>{{el.designation}} </td>
-        {% endif %}
-        {% endfor %}
+         {# {% for el in modules %}
+         {% if el.code == et.module %} #}
+        <td>{{et.module}} </td>
+        {# {% endif %}
+        {% endfor %} #}
 
-         {% for ele in elements %}
-         {% if ele.code == et.element %}
-              <td>{{ele.designation}} </td>
+         {# {% for ele in elements %}
+         {% if ele.code == et.element %} #}
+              <td>{{et.element}} </td>
 
-        {% endif %}
-        {% endfor %}
+        {# {% endif %}
+        {% endfor %} #}
         
           <td>{{et.Date_Séance}}</td>
         <td style="text-align:center;">{{et.hd}}</td>
                 <td style="text-align:center;">{{et.hf}}</td>
-                <td style="text-align:center;">{{ et.volume|round(1, 'floor') }}</td>
+                <td style="text-align:center;">{{ et.volume }}</td>
            {% if (et.Categorie == "D" or et.Categorie == "C") and et.Categorie_Enseig == "Z" %}
 
                 <td style="text-align:center;">{{et.Categorie_Enseig}}</td>
