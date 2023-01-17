@@ -526,13 +526,19 @@ class ApiController extends AbstractController
      else {
          $concatenation = "AND (x_inscription_grp.niv_1='$groupe' OR x_inscription_grp.niv_2='$groupe' OR x_inscription_grp.niv_3='$groupe')";
      }
-
+     $date1 = date('H:i:s',strtotime($date1));
+// dd($date1);
    $requete="SELECT DISTINCT userinfo.street as adm,x_inscription_grp.nom,x_inscription_grp.prenom,x_inscription_grp.Grp_Stg,min(date_format(checkinout.CHECKTIME,'%H:%i')) as pointage,'$date' as date,
-              CASE WHEN CHECKTIME>='$date1' AND CHECKTIME<=DATE_ADD('$date1', INTERVAL 30 MINUTE) THEN 'A'
-                WHEN CHECKTIME>=DATE_ADD('$date1', INTERVAL 31 MINUTE) AND CHECKTIME<=DATE_ADD('$date1', INTERVAL 44 MINUTE) THEN 'B'
-                WHEN CHECKTIME>=DATE_ADD('$date1', INTERVAL 45 MINUTE) AND CHECKTIME<=DATE_ADD('$date1', INTERVAL 60 MINUTE) THEN 'C'
-                WHEN CHECKTIME is NULL THEN 'D'
-                ELSE 'D'
+            --   CASE WHEN CHECKTIME>='$date1' AND CHECKTIME<=DATE_ADD('$date1', INTERVAL 30 MINUTE) THEN 'A'
+            --     WHEN CHECKTIME>=DATE_ADD('$date1', INTERVAL 31 MINUTE) AND CHECKTIME<=DATE_ADD('$date1', INTERVAL 44 MINUTE) THEN 'B'
+            --     WHEN CHECKTIME>=DATE_ADD('$date1', INTERVAL 45 MINUTE) AND CHECKTIME<=DATE_ADD('$date1', INTERVAL 60 MINUTE) THEN 'C'
+            --     WHEN CHECKTIME is NULL THEN 'D'
+            --     ELSE 'D'
+           CASE WHEN min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))>='$date1' AND min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))<=AddTime('$date1','00:30:59') THEN 'A'
+                WHEN min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))>=AddTime('$date1','00:31:00') AND min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))<=AddTime('$date1','00:45:00') THEN 'B'
+                WHEN min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))>AddTime('$date1','00:45:00') AND min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))<=AddTime('$date1','00:60:00') THEN 'C'
+                WHEN min(date_format(checkinout.CHECKTIME,'%H:%i:%s')) is NULL THEN 'D'
+             ELSE 'D'
                 END AS categorie
               from userinfo
              inner join x_inscription_grp on userinfo.street = x_inscription_grp.code_admission
@@ -897,7 +903,6 @@ return $requete;
         }
         $newDateD = date('Y-m-d H:i:s', strtotime($date.' '.$hd. ' -15 minutes'));
         $newDateF = date('Y-m-d H:i:s', strtotime($date.' '.$hd. ' +50 minutes'));
-
         $liste_etudiant_P = [];
         $liste_etudiants = [];
         $data = self::pointeuse_ip($salle,'traite',$date,$this->em);
@@ -911,6 +916,7 @@ return $requete;
                                     array_push($liste_etudiants, $i['adm']);
                                                    }
         $requete_abcd = self::traitement_abcd($promotion,$date,$newDateD,$newDateF,$salle,$groupe);
+        // dd($requete_abcd);
                       
                         $etudiants_abcd = self::execute($requete_abcd,$this->em);
                             foreach($etudiants_abcd as $i) {
