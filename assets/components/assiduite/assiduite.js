@@ -190,8 +190,13 @@ $(document).ready(function () {
         seance: currentRow.find("td:eq(3)").html(),
         groupe: currentRow.find("td:eq(10)").html(),
         hd: currentRow.find("td:eq(8)").html(),
+        hf: currentRow.find("td:eq(9)").html(),
         module: currentRow.find("td:eq(14)").html(),
         sale: currentRow.find("td:eq(15)").html(),
+        salle: currentRow.find("td:eq(5)").html(),
+        nature: currentRow.find("td:eq(4)").html(),
+        element: currentRow.find("td:eq(6)").html(),
+        enseignant: currentRow.find("td:eq(7)").html(),
         existe: currentRow.find("td:eq(11)").html(),
         statut: currentRow.find("td:eq(1)").html(),
       });
@@ -239,7 +244,29 @@ console.log(list);
   $("body #dtDynamicVerticalScrollExample").on("dblclick", "tr", function () {
     $("#etudiant-modal").modal("toggle");
     $("#etudiant-modal").modal("show");
+
+    // promotion: currentRow.find("td:eq(2)").html(),
+    // seance: currentRow.find("td:eq(3)").html(),
+    // groupe: currentRow.find("td:eq(10)").html(),
+    // hd: currentRow.find("td:eq(8)").html(),
+    // hf: currentRow.find("td:eq(9)").html(),
+    // module: currentRow.find("td:eq(14)").html(),
+    // sale: currentRow.find("td:eq(15)").html(),
+    // salle: currentRow.find("td:eq(5)").html(),
+    // nature: currentRow.find("td:eq(4)").html(),
+    // element: currentRow.find("td:eq(6)").html(),
+    // existe: currentRow.find("td:eq(11)").html(),
+    // statut: currentRow.find("td:eq(1)").html(),
+
     list.forEach((obj) => {
+    $("#Seance_etud").val(obj.seance);
+    $("#salle_etud").val(obj.nature + ' / ' + obj.salle);
+    $("#element_etud").val(obj.element);
+    $("#Enseignant_etud").val(obj.enseignant);
+    $("#Hd_etud").val(obj.hd);
+    $("#Hf_etud").val(obj.hf);
+    $("#group_etud").val(obj.groupe);
+
       $.ajax({
         type: "POST",
         url: "/api/Etud_aff",
