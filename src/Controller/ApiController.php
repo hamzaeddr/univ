@@ -535,8 +535,8 @@ class ApiController extends AbstractController
             --     WHEN CHECKTIME is NULL THEN 'D'
             --     ELSE 'D'
            CASE WHEN min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))>='$date1' AND min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))<=AddTime('$date1','00:30:59') THEN 'A'
-                WHEN min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))>=AddTime('$date1','00:31:00') AND min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))<=AddTime('$date1','00:45:00') THEN 'B'
-                WHEN min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))>AddTime('$date1','00:45:00') AND min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))<=AddTime('$date1','00:60:00') THEN 'C'
+                WHEN min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))>=AddTime('$date1','00:31:00') AND min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))<=AddTime('$date1','00:45:59') THEN 'B'
+                WHEN min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))>AddTime('$date1','00:46:00') AND min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))<=AddTime('$date1','00:60:59') THEN 'C'
                 WHEN min(date_format(checkinout.CHECKTIME,'%H:%i:%s')) is NULL THEN 'D'
              ELSE 'D'
                 END AS categorie
