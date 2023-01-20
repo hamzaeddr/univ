@@ -567,6 +567,7 @@ $date2 = strftime("%A %d %B %G", strtotime($date));
         'margin_top' => 75,
     ]);            
     $mpdf->SetTitle('Feuil');
+    $mpdf->SetJS('this.print()');
     $mpdf->SetHTMLHeader(
         $this->render("assiduite/pdf/header.html.twig"
         , [

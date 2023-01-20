@@ -906,7 +906,7 @@ return $requete;
         $newDateF = date('Y-m-d H:i:s', strtotime($date.' '.$hd. ' +50 minutes'));
         $liste_etudiant_P = [];
         $liste_etudiants = [];
-        $data = self::pointeuse_ip($salle,'traite',$date,$this->em);
+        // $data = self::pointeuse_ip($salle,'traite',$date,$this->em);
 
         $requete_P = self::traitement_P($promotion,$module,$groupe,$date);
 
