@@ -244,20 +244,6 @@ console.log(list);
   $("body #dtDynamicVerticalScrollExample").on("dblclick", "tr", function () {
     $("#etudiant-modal").modal("toggle");
     $("#etudiant-modal").modal("show");
-
-    // promotion: currentRow.find("td:eq(2)").html(),
-    // seance: currentRow.find("td:eq(3)").html(),
-    // groupe: currentRow.find("td:eq(10)").html(),
-    // hd: currentRow.find("td:eq(8)").html(),
-    // hf: currentRow.find("td:eq(9)").html(),
-    // module: currentRow.find("td:eq(14)").html(),
-    // sale: currentRow.find("td:eq(15)").html(),
-    // salle: currentRow.find("td:eq(5)").html(),
-    // nature: currentRow.find("td:eq(4)").html(),
-    // element: currentRow.find("td:eq(6)").html(),
-    // existe: currentRow.find("td:eq(11)").html(),
-    // statut: currentRow.find("td:eq(1)").html(),
-
     list.forEach((obj) => {
     $("#Seance_etud").val(obj.seance);
     $("#salle_etud").val(obj.nature + ' / ' + obj.salle);
@@ -295,6 +281,9 @@ console.log(list);
   });
 ////////////////////////////////:: traitement ////////////////////////////////////:
   $("body #traite_epreuve").on("click", function () {
+    var icon = $(this).find('i');
+    var button = $(this);
+    button.attr("disabled", true);
 
     list.forEach((obj) => {
       if (obj.groupe === "") {
@@ -302,28 +291,25 @@ console.log(list);
       }
       if ( obj.statut != '1'){
       $(".loader").show();
-
+      icon.removeClass('fa-clock').addClass("fa-spinner fa-spin");
       $.ajax({
         type: "POST",
         url: "/api/traitement_assiduite",
         data: {
-          // promotion: obj.promotion,
           seance: obj.seance,
           date: $("#datetime").val(),
-          // hd: obj.hd,
-          // module: obj.module,
-          // groupe: obj.groupe,
-          // sale: obj.sale,
           type : 'traite',
         },
         success: function (html) {
         $(".loader").hide();
+        icon.removeClass('fa-spinner fa-spin').addClass("fa-clock");
+        button.attr("disabled", false);
 
           seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
           Toast.fire({
             icon: 'success',
             title: 'seance traité avec succes',
-        })
+             });
           $(".grid").html(html);
           $("#traite_epreuve").hide();
           $("#retraiter_seance").hide();
@@ -335,6 +321,7 @@ console.log(list);
           $("#assiduite_print").show();
         },
       });
+     
     }
     else{
       Toast.fire({
@@ -650,12 +637,15 @@ $("body #parlot_traiter").on("click", async function () {
 //   },
 
       });
- window.open('/assiduite/assiduites/pdf/'+result, '_blank');
 } catch (error) {
       console.error(error);
   }
       }
-  
+      for(let value of val){
+
+ window.open('/assiduite/assiduites/pdf/'+value, '_blank');
+
+      }
   ////////////////////////////////////////////////////////////////////:
 });
 

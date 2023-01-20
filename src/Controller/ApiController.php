@@ -527,6 +527,7 @@ class ApiController extends AbstractController
          $concatenation = "AND (x_inscription_grp.niv_1='$groupe' OR x_inscription_grp.niv_2='$groupe' OR x_inscription_grp.niv_3='$groupe')";
      }
      $date1 = date('H:i:s',strtotime($date1));
+    //  $date1 = date('H:i:s',strtotime($date1));
 // dd($date1);
    $requete="SELECT DISTINCT userinfo.street as adm,x_inscription_grp.nom,x_inscription_grp.prenom,x_inscription_grp.Grp_Stg,min(date_format(checkinout.CHECKTIME,'%H:%i')) as pointage,'$date' as date,
             --   CASE WHEN CHECKTIME>='$date1' AND CHECKTIME<=DATE_ADD('$date1', INTERVAL 30 MINUTE) THEN 'A'
@@ -948,7 +949,7 @@ return $requete;
         $html = $this->render('assiduite/modals/count.html.twig', [
             'counts' => $counts,
        ])->getContent();
-       return new JsonResponse($seance);             
+       return new JsonResponse(1);             
        
        
 
