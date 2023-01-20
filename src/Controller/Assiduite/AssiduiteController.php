@@ -680,6 +680,7 @@ $date2 = strftime("%A %d %B %G", strtotime($date));
             
         ])->getContent()
     );
+    $mpdf->SetJS('this.print();');
     $mpdf->WriteHTML($html);
     $mpdf->Output('fueil' , 'I');
 
