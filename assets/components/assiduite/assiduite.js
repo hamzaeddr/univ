@@ -643,18 +643,10 @@ $("body #parlot_traiter").on("click", async function () {
       }
       for(let value of val){
 
-<<<<<<< Updated upstream
  window.open('/assiduite/assiduites/pdf/'+value, '_blank');
 
       }
-=======
-        let win = window.open('/assiduite/assiduites/pdf/'+result, '_blank');
-        win.onfocus = function(){
-          win.print()
-        }
-      }
-  
->>>>>>> Stashed changes
+
   ////////////////////////////////////////////////////////////////////:
 });
 
