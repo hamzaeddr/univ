@@ -40,7 +40,7 @@ class Attendance
                 $timestamp = Util::decodeTime(hexdec(Util::reverseHex(substr($u[1], 58, 8))));
                 $type = hexdec(Util::reverseHex(substr($u[1], 66, 2 )));
                 
-				// if (($timestamp >= "$date 01:00:00") && ($timestamp <= "$date 23:59:00")) {
+				// if ((strtotime($timestamp) >= strtotime("$date 01:00:00")) && ($timestamp <= strtotime("$date 23:59:59"))) {
                     if (str_contains($timestamp, $date)) { 
 
                     $attendance[] = [

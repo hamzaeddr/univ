@@ -18,20 +18,20 @@
   <tbody>
   
      {% for user in device_users %}
-     {% for us in users %}
-     {% if user.id == us.badgenumber %}
+     {# {% for us in users %}
+     {% if user.id == us.badgenumber %} #}
      
                 <tr>
-                <td>{{us.street}}</td>
-                <td>{{us.name}}</td>
+                <td>{{user.street}}</td>
+                <td>{{user.name}}</td>
                 <td>{{user.id}}</td>
                 <td>{{user.timestamp}}</td>
                
                 
                 </tr>
-                {% endif %}
+                {# {% endif %}
 
-                {% endfor %}
+                {% endfor %} #}
                 {% endfor %}
     
   </tbody>

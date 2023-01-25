@@ -320,7 +320,7 @@ console.log(list);
           $("#verouiller-modal").show();
           $("#assiduite_print").show();
         },
-      });
+      }); 
      
     }
     else{
