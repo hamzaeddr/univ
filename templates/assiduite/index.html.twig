@@ -35,15 +35,14 @@ h1 {
 
 .grid {
 	display: grid;
-  grid-template-columns: auto repeat(7, 1fr);
-  grid-template-rows: auto auto repeat(7, 1fr);
- 
-  gap: 1em;
+  grid-template-columns: auto repeat(4, 1fr);
+  {# grid-template-rows: auto auto repeat(7, 1fr); #}
+  gap: 0.5em;
 	align-items: center;
 	justify-content: center;
 	text-align: center;
-	max-width: 46em;
-        margin-left: 300px;
+	max-width: 25em;
+        margin-left: 30px;
 
 }
 
@@ -116,13 +115,13 @@ tr.highlighty{
 
 	.modal.left .modal-content,
 	.modal.right .modal-content {
-		height: 100%;
+		height: 88%;
 		overflow-y: auto;
 	}
 	
 	.modal.left .modal-body,
 	.modal.right .modal-body {
-		padding: 15px 15px 80px;
+		padding: 0px 5px 6px;
 	}
     /*Right*/
 	.modal.right.fade .modal-dialog {
@@ -147,8 +146,143 @@ tr.highlighty{
 		border-bottom-color: #EEEEEE;
 		background-color: #FAFAFA;
 	}
+  .loader2
+  {
+    position:absolute;
+    height: 120vh;
+    width:100%;
+    Z-index:1000;
+    display:none;
+
+  }
+
+  .body-loarder2{
+    position:relative;
+    height: 100%;
+    width:100%;
+  }
+  .content-loader2
+  {
+    
+    position:fixed;
+    height: 100%;
+    width:100%;
+    background-color:black ;
+    opacity:0.7;
+    Z-index:1001;
+    {# display:none; #}
+
+
+  }
+  
+.loader-circle {
+  position: absolute;
+  left: 50%;
+  top: 39%;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  margin-left: -60px;
+  margin-top: -60px;
+  z-index:3001;
+}
+.loader-content {
+  position: absolute;
+  left: 50%;
+  top: 59%;
+  transform: translate(-50%, -100%);
+  color: white !important;
+  font-family: Arial, sans-serif;
+}
+.loader-line-mask {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 60px;
+  height: 120px;
+  margin-left: -60px;
+  margin-top: -60px;
+  overflow: hidden;
+  transform-origin: 60px 60px;
+  -webkit-mask-image: -webkit-linear-gradient(top, #000000, rgba(0, 0, 0, 0));
+  animation: rotate 1.2s infinite linear;
+}
+.loader-line-mask .loader-line {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.three-dots:after {
+  cursor: pointer;
+  color: #6777ef;
+  content: '\2807';
+  font-size: 25px;
+  padding: 0 5px;
+}
+
+a {
+  cursor: pointer;
+  text-decoration: none;
+  color: white;
+}
+
+a div {
+  padding: 2px;
+}
+
+.dropdownA {
+  position: absolute;
+  right: 2px;
+  background-color: #ffffff;
+  box-shadow: 0px 0px 3px 3px #c4e2e7;
+  outline: none;
+  opacity: 0;
+  z-index: -1;
+  max-height: 0;
+  transition: opacity 0.1s, z-index 0.1s, max-height: 5s;
+}
+
+.dropdown-container:focus {
+  outline: none; 
+}
+.dropdown-container{
+  padding-left: 140px;
+}
+.dropdown-container:focus .dropdownA {
+  opacity: 1;
+  z-index: 100;
+  max-height: 100vh;
+  transition: opacity 0.2s, z-index 0.2s, max-height: 0.2s;
+}
   
 </style>
+        {# loader2................................................................... #}
+
+<div class="loader2"> 
+
+  <div class="body-loarder2">
+    <div class="content-loader2"> </div>
+        <div class="loader-circle">
+            <p class="loader-content">LOADING</p>
+            <div class="loader-line-mask">
+            <div class="loader-line"></div>
+        </div>
+    </div>
+  </div>
+
+</div>
+{# .......................................................................................... #}
 <div class="main-content">
     <section class="section">
         <div class="section-header">
@@ -163,12 +297,12 @@ tr.highlighty{
 
         <div class="section-body">
         <div class="card">
-        <div class="card-header">
+        {# <div class="card-header">
                 <h4>Traitement</h4>
-            </div>
+            </div> #}
            <div class="row" style="width: 100%; margin: 0;">
                <div class="col-md" style="padding-left: 0;">
-                    <div class="card" style="padding: 10px; height:50rem;">
+                    <div class="card" style="padding: 5px; ">
                       <br/>
                          <div class="row">
                         <div class="col-md-2" >
@@ -213,32 +347,54 @@ tr.highlighty{
                                     {% endfor %} 
                             </select>
                         </div>
-                        <div class="col-md-2">
+                        <div class=""  style=" margin-top: 5px; text-align: center";>
 </br>
-                           <button id="modisalle" type="button" class="btn btn-outline-warning btn-rounded waves-effect" style="margin-top:6px;"><i class="fas fa-edit"></i>&nbsp;&nbsp;Modifier</button>
-                           <button id="parlot" data-toggle="modal" data-target="#parlot_modal" type="button" class="btn btn-outline-info btn-rounded waves-effect" style="margin-top:6px;margin-left:20px;"><i class="fas fa-clock"></i>&nbsp;&nbsp;Par lot</button>
+                           <button id="modisalle" type="button" class="btn btn-outline-warning btn-rounded waves-effect" style="    display: inline-block;"><i class="fas fa-edit"></i>&nbsp;&nbsp;Modifier</button>
+                           <button id="parlot" data-toggle="modal" data-target="#parlot_modal" type="button" class="btn btn-outline-info btn-rounded waves-effect" style="    display: inline-block;"><i class="fas fa-clock"></i>&nbsp;&nbsp;Par lot</button>
 
                         </div>
                         <div class="col-md-2">
-<div class="dropdown">
-  <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-left: 147px;
-    margin-top: 24px;">
+<div class="dropdown-container" tabindex="-1" >
+  {# <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-left: 50px;margin-top: 23px;">
     Action
-  </button>
-  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-    <a class="dropdown-item" id="remove"><i class="fas fa-redo pr-2" aria-hidden="true"></i>&nbsp;&nbsp;Reinisialiser</a>
-    <a class="dropdown-item" id="existe"><i class="fas fa-thumbtack pr-2" aria-hidden="true"></i>&nbsp;&nbsp;Existe</a>
-    <a class="dropdown-item" id="sign"><i class="fas fa-pen"></i>&nbsp;&nbsp;Signe</a>
-    <a class="dropdown-item" id="cancel"><i class="fas fa-ban" aria-hidden="true"></i>&nbsp;&nbsp;Anullée</a>
-   
+  </button> #}
+  {# <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" > #}
+  <div class="three-dots"></div>
+    <div class="dropdownA">
+      <a class="dropdown-item" id="remove"><i class="fas fa-redo pr-2" aria-hidden="true"></i>&nbsp;&nbsp;Reinisialiser</a>
+      <a class="dropdown-item" id="existe"><i class="fas fa-thumbtack pr-2" aria-hidden="true"></i>&nbsp;&nbsp;Existe</a>
+      <a class="dropdown-item" id="sign"><i class="fas fa-pen"></i>&nbsp;&nbsp;Signe</a>
+      <a class="dropdown-item" id="cancel"><i class="fas fa-ban" aria-hidden="true"></i>&nbsp;&nbsp;Anullée</a>
+    </div>
   </div>
 </div>
                         </div>
                     </div>
                     </br>
-                    </br>
-                    <table id="dtDynamicVerticalScrollExample" class="table table-striped table-bordered table-sm" cellspacing="0"  width="100%" height="100%">
+                   
+<div class="grid">
+  <span>Categorie</span>
+  <span>A</span>
+  <span>B</span>
+  <span>C</span> 
+  <span>D</span> 
+  {# <span></span>
+  <span>AD</span>
+  <span>BD</span>  #}
 
+  <span class="row-label">Nbre Etudiants</span>
+  <div class="box">0</div>
+  <div class="box">0</div>
+  <div class="box">0</div>
+  <div class="box">0</div>
+  {# <div class="box">0</div>
+  <div class="box">0</div>
+  <div class="box">0</div> #}
+	
+</div>
+
+
+<table id="dtDynamicVerticalScrollExample" class="table table-striped table-bordered table-sm" cellspacing="0"  width="100%" height="100%" >
   <thead>
     <tr>
       <th >Statut
@@ -275,11 +431,10 @@ tr.highlighty{
   </tbody>
  
 </table>
-<div class="loader"></div>
 
                       
                     </div>
-                     <div style="width: 100px; float:left;">
+                   {#   <div style="width: 100px; float:left;">
  <div class="column1">
   <h4 style="margin-left:12px;">Status Séance</h4>
     <table>
@@ -308,36 +463,8 @@ tr.highlighty{
 </tbody></table>
 </div>
 </div>
-<div style="width: 100px; float:left;">
-  <div class="grid">
-                     
-
-
-  <span>Categorie</span>
-  <span>A</span>
-  <span>B</span>
-  <span>C</span> 
-  <span>D</span> 
-  <span></span>
-  <span>AD</span>
-  <span>BD</span> 
-	
-	
-	
-	
-  
-  <span class="row-label">Nbre Etudiants</span>
-  <div class="box">0</div>
-  <div class="box">0</div>
-  <div class="box">0</div>
-  <div class="box">0</div>
-  <div class="box">0</div>
-  <div class="box">0</div>
-  <div class="box">0</div>
-	
-	
- 
-</div>
+<div style="width: 100px; float:left;"> #}
+    
 </div>
                        
                        
@@ -356,9 +483,15 @@ tr.highlighty{
     </section>
 </div>
 
+
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script>
+let button = document.querySelector("button");
 
+button.addEventListener("click", function() {
+  console.log("Button was clicked!");
+});
 </script>
 {% include 'assiduite/modals/etudiant.html.twig' %}
 {% include 'assiduite/modals/parlot.html.twig' %}
