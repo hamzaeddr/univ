@@ -482,6 +482,15 @@ class ApiController extends AbstractController
     return $result;
  }
 
+ static function execute_query($requete,$em)
+ {
+    $stmt = $em->getConnection()->prepare($requete);
+    $newstmt = $stmt->executeQuery();   
+
+    return $newstmt;
+ }
+
+
  static function traitement_P($module,$promotion,$groupe,$date)
  {
     if ($groupe == 'empty') {
@@ -660,19 +669,16 @@ return $requete;
 
  static function remove($seance,$em)
  {
-        $xseance = $em->getRepository(Xseance::class)->findOneBy(['ID_Séance'=>$seance]);
-        $list = $em->getRepository(XseanceAbsences::class)->findBy(['ID_Séance'=>$seance]);
+ 
+    $xseance_remove= "DELETE FROM `xseance` WHERE `id_séance`=$seance";
 
+    
+    $result1 = self::execute_query($xseance_remove,$em);
+   
+    $xseance_abs_remove= "DELETE FROM `xseance_absences` WHERE `id_séance`=$seance";
+  
+    $result2 = self::execute_query($xseance_abs_remove,$em);
 
-        $em->remove($xseance);
-        $em->flush();
-
-        foreach($list as $etud){
-
-            $xseance_absence = $em->getRepository(XseanceAbsences::class)->findOneBy(['ID_Admission'=>$etud->getIDAdmission(),'ID_Séance'=>$seance]);
-            $em->remove($xseance_absence);
-    }
-    $em->flush();
     return $seance;
  }
  static function coun_categorie($idseance)
@@ -732,7 +738,7 @@ return $requete;
                             xseance.ID_Séance as exis, xseance.Statut,
                             CASE WHEN xseance.ID_Séance is NULL THEN '0'
                             ELSE 1
-                            END as Existe ,
+                            END as Existe,
                             xseance.Signé,
                             xseance.Annulée,v_seance.promotion,
                             v_seance.id_module,
@@ -910,8 +916,10 @@ return $requete;
         $liste_etudiant_P = [];
         $liste_etudiants = [];
 
+
         
         $data = self::pointeuse_ip($salle,'traite',$date,$this->em);
+
 
         $requete_P = self::traitement_P($promotion,$module,$groupe,$date);
 
@@ -1341,10 +1349,10 @@ public function pointeuse_user(Request $request, $idsalle)
     }
 
 
-    #[Route('/etud_aff_situation/{etudiant}', name: 'etud_aff_situation')]
-    public function etud_aff_situation(Request $request, $etudiant)
+    #[Route('/etud_aff_situation/{promotion}', name: 'etud_aff_situation')]
+    public function etud_aff_situation(Request $request, $promotion)
     {  
-        $requete = "SELECT * FROM `x_inscription_grp` WHERE promotion=$etudiant";
+        $requete = "SELECT * FROM `x_inscription_grp` WHERE promotion=$promotion";
          $etudiants =  self::execute($requete,$this->em);
     $data = self::dropdownsituation($etudiants,'etudiant');
     return new JsonResponse($data);

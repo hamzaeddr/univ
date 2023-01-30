@@ -10,23 +10,18 @@ const Toast = Swal.mixin({
   },
 });
 $(document).ready(function () {
-
-           
-  $(".loader").hide();
+  $(".loader2").hide();
+  // $(".loader").hide();
   // $("#etudiant_det_modal").hide();
 /////////////////////////////////// datatable //////////////////////////
-
-        var tableData = [];
-
-        function seanceaffichage(var1, var2, var3) {
-        $(".loader").show();
+  var tableData = [];
+    function seanceaffichage(var1, var2, var3) {
+        $(".loader2").fadeIn();
 
           $.ajax({
             type: "POST",
             url: "/api/Seance_aff/" + var1 + "/" + var2 + "/" + var3,
             success: function (html) {
-        $(".loader").hide();
-              
               if ($.fn.DataTable.isDataTable("#dtDynamicVerticalScrollExample")) {
                 $("#dtDynamicVerticalScrollExample").DataTable().clear().destroy();
               }
@@ -35,12 +30,21 @@ $(document).ready(function () {
                 .DataTable({
                   bLengthChange: false,
                   lengthMenu: [
-                    [11, 25, 35, 50, 100, 20000000000000],
+                    [10, 20, 30, 40,50, 20000000000000],
                     [10, 15, 25, 50, 100, "All"],
                   ],
                   "font-size": "3rem",
                 });
+                $(".loader2").hide();
             },
+            error:function(){
+             $(".loader2").hide();
+
+              Toast.fire({
+                icon: 'error',
+                title: 'Probleme  !',
+                 });
+         }
           });
           return var1;
         }
@@ -49,15 +53,23 @@ $(document).ready(function () {
 
         function etudiant_situation_affichage(var1) {
 
-          $(".loader").show();
+          $(".loader2").show();
             $.ajax({
               type: "POST",
               url: "/api/etud_aff_situation/" + var1,
               success: function (html) {
-              $(".loader").hide();
+              $(".loader2").hide();
               $("#Et_situation").html(html);   
             
               },
+               error:function(){
+             $(".loader2").hide();
+
+              Toast.fire({
+                icon: 'error',
+                title: 'Probleme  !',
+                 });
+         }
             });
             return var1;
           }
@@ -130,6 +142,14 @@ $(document).ready(function () {
                       $("#promotion").prop("selectedIndex", 1);
                       seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
                     },
+                    error:function(){
+                      $(".loader2").hide();
+         
+                       Toast.fire({
+                         icon: 'error',
+                         title: 'Probleme  !',
+                          });
+                  }
                   });
                 },
               });
@@ -146,6 +166,14 @@ $(document).ready(function () {
         $("#promotion").prop("selectedIndex", 1);
         seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
       },
+       error:function(){
+             $(".loader2").hide();
+
+              Toast.fire({
+                icon: 'error',
+                title: 'Probleme  !',
+                 });
+         }
     });
   });
 ////////////////////////////////////////////////Promotion//////////
@@ -231,12 +259,21 @@ $(document).ready(function () {
       },
       success: function (html) {
         $(".grid").html(html);
+        
+        // $(".grid").clear().destroy();
+      },
+      error:function(){
+        $(".loader2").hide();
 
-      }
+         Toast.fire({
+           icon: 'error',
+           title: 'Probleme  !',
+            });
+    }
   });
   });
 }
-console.log(list);
+// console.log(list);
 
   });
 
@@ -252,6 +289,7 @@ console.log(list);
     $("#Hd_etud").val(obj.hd);
     $("#Hf_etud").val(obj.hf);
     $("#group_etud").val(obj.groupe);
+    $(".loader2").hide();
 
       $.ajax({
         type: "POST",
@@ -263,6 +301,7 @@ console.log(list);
           existe: obj.existe,
         },
         success: function (html) {
+          // $(".loader2").hide();
           if ($.fn.DataTable.isDataTable("#dtDynamicVerticalScrollExample2")) {
             $("#dtDynamicVerticalScrollExample2").DataTable().clear().destroy();
           }
@@ -271,11 +310,19 @@ console.log(list);
             .DataTable({
               bLengthChange: false,
               lengthMenu: [
-                [25, 50, 75, 100, 125, 20000000000000],
+                [12, 24, 36, 48, 60, 20000000000000],
                 [10, 15, 25, 50, 100, "All"],
               ],
             });
         },
+        error:function(){
+          $(".loader2").hide();
+
+           Toast.fire({
+             icon: 'error',
+             title: 'Probleme  !',
+              });
+      }
       });
     });
   });
@@ -290,7 +337,7 @@ console.log(list);
         obj.groupe = "empty";
       }
       if ( obj.statut != '1'){
-      $(".loader").show();
+      $(".loader2").show();
       icon.removeClass('fa-clock').addClass("fa-spinner fa-spin");
       $.ajax({
         type: "POST",
@@ -301,9 +348,9 @@ console.log(list);
           type : 'traite',
         },
         success: function (html) {
-        $(".loader").hide();
-        icon.removeClass('fa-spinner fa-spin').addClass("fa-clock");
-        button.attr("disabled", false);
+          icon.removeClass('fa-spinner fa-spin').addClass("fa-clock");
+          button.attr("disabled", false);
+          $(".loader2").hide();
 
           seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
           Toast.fire({
@@ -320,18 +367,30 @@ console.log(list);
           $("#verouiller-modal").show();
           $("#assiduite_print").show();
         },
+        error:function(){
+          
+          Toast.fire({
+            icon: 'error',
+            title: 'Probleme  !',
+          });
+          $(".loader2").hide();
+        }
       });
      
     }
     else{
+      $(".loader2").fadeOut();
       Toast.fire({
         icon: 'error',
         title: 'seance deja traité',
-    })
-    }
 
-    });
+      })
+      // $(".loader2").hide();
+    };
+    
   });
+      
+});
 
   ////////////////////////////////:: retraiter  ////////////////////////////////////:
 
@@ -365,6 +424,14 @@ console.log(list);
           $("#verouiller-modal").show();
           $("#assiduite_print").show();
         },
+        error:function(){
+          $(".loader2").hide();
+
+           Toast.fire({
+             icon: 'error',
+             title: 'Probleme  !',
+              });
+      }
       });
     });
   });
@@ -394,6 +461,7 @@ console.log(list);
   ////////////////////////////////::  ////////////////////////////////////:
   ////////////////////////////////:: remove seance   ////////////////////////////////////:
   $("body #remove").on("click", function () {
+    $('.loader2').fadeIn();
     list.forEach((obj) => {
 
       $.ajax({
@@ -405,8 +473,16 @@ console.log(list);
         },
         success: function (html) {
           seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
+          $(".loader2").hide();
         
         },
+        error:function(){
+          $(".loader2").hide();
+           Toast.fire({
+             icon: 'error',
+             title: 'Probleme technique  !',
+              });
+      }
       });
   
   });
@@ -426,8 +502,16 @@ console.log(list);
         },
         success: function (html) {
           seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
-        
+          $(".loader2").hide();
         },
+        error:function(){
+          $(".loader2").hide();
+
+           Toast.fire({
+             icon: 'error',
+             title: 'Probleme  !',
+              });
+      }
       });
   
   });
@@ -436,6 +520,7 @@ console.log(list);
 
   ////////////////////////////////:: sign   ////////////////////////////////////:
   $("body #sign").on("click", function () {
+    
     list.forEach((obj) => {
 
       $.ajax({
@@ -451,8 +536,17 @@ console.log(list);
             title: 'seance signé',
         })
           seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
+          $(".loader2").hide();
         
         },
+        error:function(){
+          $(".loader2").hide();
+
+           Toast.fire({
+             icon: 'error',
+             title: 'Probleme  !',
+              });
+      }
       });
   
   });
@@ -461,6 +555,7 @@ console.log(list);
 
   ////////////////////////////////:: cancel   ////////////////////////////////////:
   $("body #cancel").on("click", function () {
+    $(".loader2").hide();
     list.forEach((obj) => {
 
       $.ajax({
@@ -472,8 +567,16 @@ console.log(list);
         },
         success: function (html) {
           seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
-        
+          $(".loader2").hide();
         },
+        error:function(){
+          $(".loader2").hide();
+
+           Toast.fire({
+             icon: 'error',
+             title: 'Probleme  !',
+              });
+      }
       });
   
   });
@@ -483,6 +586,7 @@ console.log(list);
   ////////////////////////////////::  ////////////////////////////////////:
   ////////////////////////////////:: deverou  ////////////////////////////////////:
   $("body #deverouiller-modal").on("click", function () {
+    $(".loader2").hide();
     list.forEach((obj) => {
 
       $.ajax({
@@ -494,8 +598,15 @@ console.log(list);
         },
         success: function (html) {
           seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
-        
+          $(".loader2").hide();
         },
+        error:function(){
+          $(".loader2").hide();
+           Toast.fire({
+             icon: 'error',
+             title: 'Probleme  !',
+              });
+      }
       });
   
   });
@@ -503,6 +614,7 @@ console.log(list);
 });
   ////////////////////////////////:: modifier_salle  ////////////////////////////////////:
   $("body #modisalle").on("click", function () {
+    $(".loader2").hide();
     var salle = $("#salle").val();
     
     list.forEach((obj) => {
@@ -516,8 +628,16 @@ console.log(list);
         },
         success: function (html) {
           seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
-        
+          $(".loader2").hide();
         },
+        error:function(){
+          $(".loader2").hide();
+
+           Toast.fire({
+             icon: 'error',
+             title: 'Probleme  !',
+              });
+      }
       });
   
   });
@@ -539,6 +659,14 @@ console.log(list);
           seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
         
         },
+        error:function(){
+          $(".loader2").hide();
+
+           Toast.fire({
+             icon: 'error',
+             title: 'Probleme  !',
+              });
+      }
       });
   
   });
@@ -562,14 +690,14 @@ function deSelect(){
   }  
 }          
 $("body #check").on("click", function () {
-alert('ok');
+// alert('ok');
 selects();  // $("#parlot_modal").show();
- 
+$(".loader2").hide();
 });
 $("body #uncheck").on("click", function () {
-alert('ok');
+// alert('ok');
 deSelect();  // $("#parlot_modal").show();
- 
+$(".loader2").hide();
 });
 //////////////////////////////// pointeuse check /uncheck ////////////////////////////////////
 
@@ -601,8 +729,9 @@ $("body #parlot_search").on("click", function () {
      
     },
     success: function (html) {
+      $(".loader2").hide();
       if ($.fn.DataTable.isDataTable("#parlot_datatable")) {
-        $("#parlot_datatable").DataTable().clear().destroy();
+          $("#parlot_datatable").DataTable().clear().destroy();
       }
       $("#parlot_datatable")
         .html(html)
@@ -615,6 +744,14 @@ $("body #parlot_search").on("click", function () {
           "font-size": "3rem",
         });
     },
+    error:function(){
+      $(".loader2").hide();
+
+       Toast.fire({
+         icon: 'error',
+         title: 'Probleme  !',
+          });
+  },
   });
  
 });
@@ -658,7 +795,7 @@ $("body #parlot_traiter").on("click", async function () {
  window.open('/assiduite/assiduites/pdf/'+value, '_blank');
 
       }
-
+      $(".loader2").hide();
   ////////////////////////////////////////////////////////////////////:
 });
 
@@ -702,6 +839,7 @@ $("body #parlot_traiter").on("click", async function () {
       type: "POST",
       url: "/api/Formation_aff/" + etablissement,
       success: function (html) {
+        $(".loader2").hide();
         $("#F_situation").html(html);
         $("#F_situation").prop("selectedIndex", 1);
 
@@ -712,11 +850,25 @@ $("body #parlot_traiter").on("click", async function () {
             $("#P_situation").html(html);
             $("#P_situation").prop("selectedIndex", 1);
             etudiant_situation_affichage($("#P_situation").val());
-            
-            
           },
+          error:function(){
+            $(".loader2").hide();
+
+             Toast.fire({
+               icon: 'error',
+               title: 'Probleme  !',
+                });
+        },
         });
       },
+      error:function(){
+        $(".loader2").hide();
+
+         Toast.fire({
+           icon: 'error',
+           title: 'Probleme  !',
+            });
+    },
     });
   });
   ///////////////Fomation//////////
@@ -727,11 +879,20 @@ $("body #parlot_traiter").on("click", async function () {
       type: "POST",
       url: "/api/Promotion_aff/" + formation,
       success: function (html) {
+        $(".loader2").hide();
         $("#P_situation").html(html);
         $("#P_situation").prop("selectedIndex", 1);
         etudiant_situation_affichage($("#P_situation").val());
 
       },
+      error:function(){
+        $(".loader2").hide();
+
+         Toast.fire({
+           icon: 'error',
+           title: 'Probleme  !',
+            });
+    },
     });
   });
   ///////////////Promotion//////////
@@ -805,8 +966,16 @@ $("body #parlot_traiter").on("click", async function () {
           },
           success: function (html) {
             $('#modal_etud_det').html(html);
-          
+            $(".loader2").hide();
           },
+          error:function(){
+            $(".loader2").hide();
+
+             Toast.fire({
+               icon: 'error',
+               title: 'Probleme  !',
+                });
+        },
         });
        }
 
@@ -857,11 +1026,18 @@ $("body #parlot_traiter").on("click", async function () {
                 .DataTable({
                   bLengthChange: false,
                   lengthMenu: [
-                    [25, 50, 75, 100, 125, 20000000000000],
+                    [15, 30, 45, 60, 75, 20000000000000],
                     [10, 15, 25, 50, 100, "All"],
                   ],
                 });
             },
+            error:function(){
+              $(".loader2").hide();
+               Toast.fire({
+                 icon: 'error',
+                 title: 'Probleme  !',
+                  });
+          },
           });
         });
         $("#etudiant_det_modal").modal("toggle");
@@ -874,6 +1050,7 @@ $("body #parlot_traiter").on("click", async function () {
   //////////////////////////Pointage ////////////////////////////////////////////
 
   $("body #pointage").on("click", function () {
+    
 
 list.forEach((obj) => {
   if (obj.statut == 1) {
@@ -895,11 +1072,20 @@ $.ajax({
       .DataTable({
         bLengthChange: false,
         lengthMenu: [
-          [25, 50, 75, 100, 125, 20000000000000],
+          [16, 32, 48, 64, 74, 20000000000000],
           [10, 15, 25, 50, 100, "All"],
         ],
       });
+      $(".loader2").hide();
   },
+  error:function(){
+    $(".loader2").hide();
+     Toast.fire({
+       icon: 'error',
+       title: 'Probleme  !',
+        });
+},
+
 });
 }
   });
@@ -912,4 +1098,18 @@ $('#E_situation').select2();
 $('#F_situation').select2();
 $('#P_situation').select2();
 $('#Et_situation').select2();
+
+
+
+$("button").on("click", function () {
+   $('.loader2').fadeIn();
 });
+
+$(".close").on("click", function () {
+  $('.loader2').fadeOut();
+});
+
+
+});
+/////////////////////////////////////////////////soufiane ///////////////////////////////////////////////////////////////
+
