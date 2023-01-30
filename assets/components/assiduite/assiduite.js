@@ -699,6 +699,18 @@ $("body #uncheck").on("click", function () {
 deSelect();  // $("#parlot_modal").show();
 $(".loader2").hide();
 });
+//////////////////////////////// pointeuse check /uncheck ////////////////////////////////////
+
+$("body #p_check").click(function ()  {
+alert('ok');
+selects();  // $("#parlot_modal").show();
+ 
+});
+$("body #p_uncheck").on("click", function () {
+alert('ok');
+deSelect();  // $("#parlot_modal").show();
+ 
+});
   ////////////////////////////////::  ////////////////////////////////////:
 //////////////////////////////// parlot_hd-f ////////////////////////////////////
 

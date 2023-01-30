@@ -51,6 +51,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 require '../zklib/zklib/ZKLib.php';
+
 // require __DIR__ . '../../../vendor/autoload.php';
 
 #[Route('/api')]
@@ -744,7 +745,9 @@ return $requete;
                             v_seance.code_salle
                     FROM v_seance
                     LEFT JOIN xseance ON xseance.id_séance=v_seance.code_seance
-                    WHERE  v_seance.promotion=$promotion  AND v_seance.date_seance like '$date%' $concatenation ORDER BY v_seance.heure_debut";
+                    INNER JOIN ac_formation ON ac_formation.id=v_seance.formation
+                    INNER JOIN ac_etablissement ON ac_etablissement.id=v_seance.etablissement
+                    WHERE ac_etablissement.abreviation in ('FMA' ,'FMDA' , 'ISITS' , 'FASIMH' , 'FPA' , 'LAZ','EIG','EIA','MGS','CPGEA') AND ac_formation.abreviation IN ('IGPIP','MG','MD','IST','IP','IAR','IM','CAM','CAM - SIBOP','CAM - SIH','CPGEA','PH','PH_HOSPIT','PH_INDUST','IGPIP','GISIPA','MPSI','MP') and  v_seance.promotion=$promotion  AND v_seance.date_seance like '$date%' $concatenation ORDER BY v_seance.heure_debut";
     $stmt = $this->em->getConnection()->prepare($requete);
     $newstmt = $stmt->executeQuery();   
     $seances = $newstmt->fetchAll();
@@ -912,7 +915,11 @@ return $requete;
         $newDateF = date('Y-m-d H:i:s', strtotime($date.' '.$hd. ' +50 minutes'));
         $liste_etudiant_P = [];
         $liste_etudiants = [];
-        // $data = self::pointeuse_ip($salle,'traite',$date,$this->em);
+
+
+        
+        $data = self::pointeuse_ip($salle,'traite',$date,$this->em);
+
 
         $requete_P = self::traitement_P($promotion,$module,$groupe,$date);
 
@@ -949,12 +956,12 @@ return $requete;
         else {
             $retraite_seance = self::retraite_seance($liste_etudiant_P,$seance,$this->em);                                                       
                              }
-        $requete_count = self::coun_categorie($seance);
-        $counts =  self::execute($requete_count,$this->em);
+    //     $requete_count = self::coun_categorie($seance);
+    //     $counts =  self::execute($requete_count,$this->em);
    
-        $html = $this->render('assiduite/modals/count.html.twig', [
-            'counts' => $counts,
-       ])->getContent();
+    //     $html = $this->render('assiduite/modals/count.html.twig', [
+    //         'counts' => $counts,
+    //    ])->getContent();
        return new JsonResponse(1);             
        
        
@@ -1164,7 +1171,7 @@ public function parlot(Request $request)
         LEFT JOIN ac_element ON ac_element.code=v_seance.element
         left JOIN psalles ON psalles.code=v_seance.code_salle
         LEFT JOIN penseignant ON penseignant.code=v_seance.enseignant
-        WHERE v_seance.date_seance like '$date%' AND v_seance.heure_debut>='$hd' AND v_seance.heure_fin<='$hf' ORDER BY v_seance.heure_debut";
+        WHERE ac_etablissement.abreviation in ('FMA' ,'FMDA' , 'ISITS' , 'FASIMH' , 'FPA' , 'LAZ','EIG','EIA','MGS','CPGEA') AND ac_formation.abreviation IN ('IGPIP','MG','MD','IST','IP','IAR','IM','CAM','CAM - SIBOP','CAM - SIH','CPGEA','PH','PH_HOSPIT','PH_INDUST','IGPIP','GISIPA','MPSI','MP') and v_seance.date_seance like '$date%' AND v_seance.heure_debut>='$hd' AND v_seance.heure_fin<='$hf' ORDER BY v_seance.heure_debut";
         $seances =  self::execute($requete,$this->em);
         $html = $this->render('assiduite/table/datatable_parlot.html.twig', [
             'seances' => $seances,
@@ -1202,14 +1209,26 @@ public function pointeuse_aff(Request $request, $idsalle)
 #[Route('/pointeuse_connect/{idsalle}', name: 'pointeuse_connect')]
 public function pointeuse_connect(Request $request, $idsalle)
 {  
-    $zk = new \ZKLib($idsalle, 4370, 'udp');
-    if ($zk->connect() == 'true') {
-        $statut = "true";
-    }
-    else {
-        $statut = "false";
+    $ping =  self::ping($idsalle);
+    if ($ping == 'yes') {
 
+        $zk = new \ZKLib($idsalle, 4370, 'udp');
+        if ($zk->connect() == 'true') {
+            $statut = "true";
+        }
+        else{
+            $statut = "false";
+
+        }
+        
     }
+    else{
+        
+            $statut = "false";
+    
+        
+    }
+  
     // $ret = $zk->connect();
     // $zk->disableDevice();
     return new JsonResponse($statut);
@@ -1258,8 +1277,10 @@ public function pointeuse_user(Request $request, $idsalle)
     {  
         ini_set('memory_limit', '2G'); // or you could use 1G
 
+        $ping =  self::ping($idsalle);
+        if ($ping == 'yes') {
 
-        // $zk = new \ZKLib($idsalle, 4370, 'udp');
+             // $zk = new \ZKLib($idsalle, 4370, 'udp');
         $zk = new \ZKLib('172.20.7.208', 4370, 'udp');
         if ($zk->connect() == 'true') {
             $statut = "device connected";
@@ -1291,6 +1312,12 @@ public function pointeuse_user(Request $request, $idsalle)
             'users' => $users,
             'device_users' => $user_device,
        ])->getContent();
+                }
+                else {
+                    $html = 'pointeuse not connected';
+                }
+        
+       
 
    return new JsonResponse($html);
 
@@ -1621,9 +1648,10 @@ if ($zk->connect() == 'true') {
             $statut = "device connected";
                 $ret = $zk->connect();
                 $zk->disableDevice();
-                    $attendance = $zk->getAttendance($date);
+                $sn = $zk->serialNumber();
+                $attendance = $zk->getAttendance($date);
                 // $attendance = $zk->getAttendance_date($date,$date);
-                if (count($attendance) > 0) {
+                if (!empty($attendance)) {
                     $attendance = array_reverse($attendance, true);
                     foreach ($attendance as $attItem) {
                     $user = $em->getRepository(Userinfo::class)->findOneBy(['Badgenumber'=>$attItem['id']]);
@@ -1634,11 +1662,14 @@ if ($zk->connect() == 'true') {
                         $checkinout->setUSERID($user->getUSERID());
                         $checkinout->setSn($sn);
                         $checkinout->setCHECKTIME($date_);
-                        $checkinout->setMemoinfo("test4");
+                        $checkinout->setMemoinfo("black");
                         $em->persist($checkinout);
             
             
                     
+                    }
+                    else{
+
                     }
                 }
                     $em->flush();
@@ -1663,6 +1694,24 @@ return $statut;
 
 
 }
+static function ping($ip)
+{
+  $host=$ip;
+
+                exec("ping -n 2 " . $host, $output, $result);
+
+
+                if ($result == 0){
+
+                $status = 'yes';
+                           }
+
+                else{
+                $status = 'no';
+                    }
+                return $status;
+
+}
 
     // #[Route('/pointeu_ip/{salle}/{type}/{date}', name: 'pointeuse_ip')]
     static function pointeuse_ip($salle,$type,$date,$em)
@@ -1675,59 +1724,70 @@ return $statut;
             FROM `psalles` 
             INNER JOIN iseance_salle ON iseance_salle.code_salle=psalles.code 
             INNER JOIN machines ON iseance_salle.id_pointeuse=machines.sn
-             where psalles.code='$salle'";
+             where psalles.code='$salle' and machines.IP not in ('172.18.4.175','172.20.10.16') order by machines.IP";
 
             // where machines.IP  in  ('172.20.10.2','172.20.10.3','172.20.10.4','172.20.10.5','172.20.10.6','172.20.10.7'
             //             ,'172.20.10.8','172.20.10.9','172.20.10.10','172.20.10.11','172.20.10.12','172.20.10.13','172.20.10.14')";
             // --  where psalles.code='$salle'";
             $ip =  self::execute($requete,$em);
+            // dd($ip);
+            // $myArr = [];
+
             foreach ($ip as $ips) {
-                $data = self::pointeuse_insert($ips['IP'],$ips['sn'],$date,$em);
+
+                $ping =  self::ping($ips['IP']);
+                if ($ping == 'yes') {
+                    $data = self::pointeuse_insert($ips['IP'],$ips['sn'],$date,$em);
+                                    }
+              
+                // dd($data);
                 // array_push($pointeuse_status, ["eta" => $data]);
 
         }
+        // dd($myArr);
         // dd($pointeuse_status);
         }
         else {
             // dd('else');
+            $data = self::pointeuse_insert($salle,'sn',$date,$em);
 
-            $zk = new \ZKLib("$salle", 4370, "udp");
+            // $zk = new \ZKLib("$salle", 4370, "udp");
 
-            if ($zk->connect() == 'true') {
-                $statut = "device connected";
-                $ret = $zk->connect();
-                $sn = $zk->serialNumber();
-                $zk->disableDevice();
-                    $attendance = $zk->getAttendance($date);
-                    // $attendance = $zk->getAttendance_date($date,$date);
-                    if (count($attendance) > 0) {
-                        $attendance = array_reverse($attendance, true);
-                        foreach ($attendance as $attItem) {
-                        $user = $em->getRepository(Userinfo::class)->findOneBy(['Badgenumber'=>$attItem['id']]);
-                        if ($user) {
-                            $date_ = new \DateTime($attItem["timestamp"]);
-                            // $check = $this->em->getRepository(checkinout::class)->findBy(['USERID'=>$user->getUSERID(), 'CHECKTIME' => $date]);
-                               $checkinout = new Checkinout;
-                               $checkinout->setUSERID($user->getUSERID());
-                               $checkinout->setSn($sn);
-                               $checkinout->setCHECKTIME($date_);
-                               $checkinout->setMemoinfo("test4");
-                               $em->persist($checkinout);
+            // if ($zk->connect() == 'true') {
+            //     $statut = "device connected";
+            //     $ret = $zk->connect();
+            //     $sn = $zk->serialNumber();
+            //     $zk->disableDevice();
+            //         $attendance = $zk->getAttendance($date);
+            //         // $attendance = $zk->getAttendance_date($date,$date);
+            //         if (count($attendance) > 0) {
+            //             $attendance = array_reverse($attendance, true);
+            //             foreach ($attendance as $attItem) {
+            //             $user = $em->getRepository(Userinfo::class)->findOneBy(['Badgenumber'=>$attItem['id']]);
+            //             if ($user) {
+            //                 $date_ = new \DateTime($attItem["timestamp"]);
+            //                 // $check = $this->em->getRepository(checkinout::class)->findBy(['USERID'=>$user->getUSERID(), 'CHECKTIME' => $date]);
+            //                    $checkinout = new Checkinout;
+            //                    $checkinout->setUSERID($user->getUSERID());
+            //                    $checkinout->setSn($sn);
+            //                    $checkinout->setCHECKTIME($date_);
+            //                    $checkinout->setMemoinfo("test4");
+            //                    $em->persist($checkinout);
                 
                 
                           
-                        }
-                    }
-                        $em->flush();
-                        $statut = "insert avec success";
+            //             }
+            //         }
+            //             $em->flush();
+            //             $statut = "insert avec success";
             
                   
-                    }
-            }
-            else {
-                $statut = "device is not connected.";
+            //         }
+            // }
+            // else {
+            //     $statut = "device is not connected.";
         
-            }
+            // }
            
         }
         
