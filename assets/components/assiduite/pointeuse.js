@@ -11,34 +11,67 @@ const Toast = Swal.mixin({
     },
   });
   ////////////////////////////////////////////////////////////////////:
+$(document).ready(function () {
+   
+//////////////////////////////// select all / unselect ////////////////////////////////////
+function selects(){  
+  var ele=document.getElementsByName('chk');  
+  for(var i=0; i<ele.length; i++){  
+      if(ele[i].type=='checkbox')  
+          ele[i].checked=true;  
+  }  
+}  
+function deSelect(){  
+  var ele=document.getElementsByName('chk');  
+  for(var i=0; i<ele.length; i++){  
+      if(ele[i].type=='checkbox')  
+          ele[i].checked=false;  
+        
+  }  
+}    
 
+function pointeuse_af(var1) {
+  $.ajax({
+    type: "POST",
+    url: "/api/pointeuse_aff/" + var1,
+    success: function (html) {
+  $(".loader").hide();
+
+      if ($.fn.DataTable.isDataTable("#dtDynamicVerticalScrollExample_pointeuse")) {
+        $("#dtDynamicVerticalScrollExample_pointeuse").DataTable().clear().destroy();
+      }
+      $("#dtDynamicVerticalScrollExample_pointeuse")
+        .html(html)
+        .DataTable({
+          bLengthChange: false,
+          lengthMenu: [
+            [11, 25, 35, 50, 100, 20000000000000],
+            [10, 15, 25, 50, 100, "All"],
+          ],
+          "font-size": "3rem",
+        });
+
+   
+    }
+  });
+  return var1;
+}
+
+//////////////////////////////// pointeuse check /uncheck ////////////////////////////////////
+
+$("body #p_check").on("click", function () {
+selects();  // $("#parlot_modal").show();
+ 
+});
+$("body #p_uncheck").on("click", function () {
+deSelect();  // $("#parlot_modal").show();
+ 
+});
   $("#salle_pointeuse").on("change", function () {
     var salle = $(this).val();
     $(".loader").show();
   
-    $.ajax({
-      type: "POST",
-      url: "/api/pointeuse_aff/" + salle,
-      success: function (html) {
-    $(".loader").hide();
-  
-        if ($.fn.DataTable.isDataTable("#dtDynamicVerticalScrollExample_pointeuse")) {
-          $("#dtDynamicVerticalScrollExample_pointeuse").DataTable().clear().destroy();
-        }
-        $("#dtDynamicVerticalScrollExample_pointeuse")
-          .html(html)
-          .DataTable({
-            bLengthChange: false,
-            lengthMenu: [
-              [11, 25, 35, 50, 100, 20000000000000],
-              [10, 15, 25, 50, 100, "All"],
-            ],
-            "font-size": "3rem",
-          });
-  
-     
-      }
-    });
+    pointeuse_af(salle);
   });
     ////////////////////////////////////////////////////////////////////
   
@@ -175,4 +208,7 @@ const Toast = Swal.mixin({
       });
     });
 
+ 
+
+  });
   });
