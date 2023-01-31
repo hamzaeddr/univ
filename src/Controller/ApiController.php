@@ -917,8 +917,11 @@ return $requete;
         $liste_etudiants = [];
 
 
-        
-        $data = self::pointeuse_ip($salle,'traite',$date,$this->em);
+        try {
+            self::pointeuse_ip($salle,'traite',$date,$this->em);
+        } catch (\Throwable $th) {
+            $status = 'error import';
+        }
 
 
         $requete_P = self::traitement_P($promotion,$module,$groupe,$date);
@@ -1645,26 +1648,24 @@ static function pointeuse_insert($idsalle,$sn,$date,$em)
 $zk = new \ZKLib("$idsalle", 4370, "udp");
 
 if ($zk->connect() == 'true') {
-            $statut = "device connected";
+               $statut = "device connected";
                 $ret = $zk->connect();
                 $zk->disableDevice();
                 $sn = $zk->serialNumber();
                 $attendance = $zk->getAttendance($date);
-                // $attendance = $zk->getAttendance_date($date,$date);
                 if (!empty($attendance)) {
                     $attendance = array_reverse($attendance, true);
                     foreach ($attendance as $attItem) {
                     $user = $em->getRepository(Userinfo::class)->findOneBy(['Badgenumber'=>$attItem['id']]);
                     if ($user) {
                         $date_ = new \DateTime($attItem["timestamp"]);
-                        // $check = $this->em->getRepository(checkinout::class)->findBy(['USERID'=>$user->getUSERID(), 'CHECKTIME' => $date]);
+                      
                         $checkinout = new Checkinout;
                         $checkinout->setUSERID($user->getUSERID());
                         $checkinout->setSn($sn);
                         $checkinout->setCHECKTIME($date_);
-                        $checkinout->setMemoinfo("black");
+                        $checkinout->setMemoinfo("199");    
                         $em->persist($checkinout);
-            
             
                     
                     }
@@ -1673,7 +1674,7 @@ if ($zk->connect() == 'true') {
                     }
                 }
                     $em->flush();
-        
+                   
             
                 }
         $statut = "'".$idsalle."'device is connected";
@@ -1685,7 +1686,6 @@ if ($zk->connect() == 'true') {
         $statut = "'".$idsalle."'device is not connected";
 
     }
-    // dd($pointeuse_status);
     
 
    
