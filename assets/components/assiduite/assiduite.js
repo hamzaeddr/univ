@@ -10,13 +10,18 @@ const Toast = Swal.mixin({
   },
 });
 $(document).ready(function () {
+  /////////////////function loader hide////////////
   $(".loader2").hide();
+
+function loader_hide() {
+  $(".loader2").hide();
+}
   // $(".loader").hide();
   // $("#etudiant_det_modal").hide();
 /////////////////////////////////// datatable //////////////////////////
   var tableData = [];
     function seanceaffichage(var1, var2, var3) {
-        $(".loader2").fadeIn();
+        $(".loader2").show();
 
           $.ajax({
             type: "POST",
@@ -49,6 +54,7 @@ $(document).ready(function () {
           return var1;
         }
 
+
 /////////////////dropdown-etdiants////////////////////////////
 
         function etudiant_situation_affichage(var1) {
@@ -58,12 +64,14 @@ $(document).ready(function () {
               type: "POST",
               url: "/api/etud_aff_situation/" + var1,
               success: function (html) {
-              $(".loader2").hide();
+              // $(".loader2").hide();
+              loader_hide();
               $("#Et_situation").html(html);   
             
               },
                error:function(){
-             $(".loader2").hide();
+            //  $(".loader2").hide();
+             loader_hide();
 
               Toast.fire({
                 icon: 'error',
@@ -423,6 +431,9 @@ $(document).ready(function () {
           $("#retraiter_seance").show();
           $("#verouiller-modal").show();
           $("#assiduite_print").show();
+          setInterval(function () {
+            loader_hide();
+        },1000);
         },
         error:function(){
           $(".loader2").hide();
@@ -438,6 +449,9 @@ $(document).ready(function () {
 
   ////////////////////////////////:: feuile pdf  ////////////////////////////////////:
   $("body #assiduite_print").on("click", function () {
+    setInterval(function () {
+      loader_hide();
+  },1000);
     list.forEach((obj) => {
 
     window.open('/assiduite/assiduites/pdf/'+obj.seance, '_blank');

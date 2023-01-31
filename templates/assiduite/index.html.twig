@@ -15,52 +15,52 @@
 {# @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital@0;1&display=swap'); #}
 
 {# * {
-	box-sizing: border-box;
+  box-sizing: border-box;
 } #}
 
 .grid {
-	display: grid;
-	font-size: calc(0.4rem + 0.5vw);
-	margin: 0;
-	color: #333;
-	
-	
+  display: grid;
+  font-size: calc(0.4rem + 0.5vw);
+  margin: 0;
+  color: #333;
+  
+  
 }
 
 h1 {
-	grid-column: 2 / -1;
-	font-weight: normal;
-	border-bottom: 1px solid #999;
+  grid-column: 2 / -1;
+  font-weight: normal;
+  border-bottom: 1px solid #999;
 }
 
 .grid {
-	display: grid;
+  display: grid;
   grid-template-columns: auto repeat(4, 1fr);
   {# grid-template-rows: auto auto repeat(7, 1fr); #}
   gap: 0.5em;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
-	max-width: 25em;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  max-width: 25em;
         margin-left: 30px;
 
 }
 
 .box {
-	padding: 0.5em;
+  padding: 0.5em;
 
   border: 2px solid;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-style: italic;
-	background: #f0f0f0;
-	
-	
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: italic;
+  background: #f0f0f0;
+  
+  
 }
 
 .row-label {
-	text-align: right;
+  text-align: right;
 }
 
 tr.highlighty{
@@ -101,51 +101,51 @@ tr.highlighty{
 
 }
 
-   	.modal.left .modal-dialog,
-	.modal.right .modal-dialog {
-		position: fixed;
-		margin: auto;
-		width: 320px;
-		height: 100%;
-		-webkit-transform: translate3d(0%, 0, 0);
-		    -ms-transform: translate3d(0%, 0, 0);
-		     -o-transform: translate3d(0%, 0, 0);
-		        transform: translate3d(0%, 0, 0);
-	}
+    .modal.left .modal-dialog,
+  .modal.right .modal-dialog {
+    position: fixed;
+    margin: auto;
+    width: 320px;
+    height: 100%;
+    -webkit-transform: translate3d(0%, 0, 0);
+        -ms-transform: translate3d(0%, 0, 0);
+         -o-transform: translate3d(0%, 0, 0);
+            transform: translate3d(0%, 0, 0);
+  }
 
-	.modal.left .modal-content,
-	.modal.right .modal-content {
-		height: 88%;
-		overflow-y: auto;
-	}
-	
-	.modal.left .modal-body,
-	.modal.right .modal-body {
-		padding: 0px 5px 6px;
-	}
+  .modal.left .modal-content,
+  .modal.right .modal-content {
+    height: 88%;
+    overflow-y: auto;
+  }
+  
+  .modal.left .modal-body,
+  .modal.right .modal-body {
+    padding: 0px 5px 6px;
+  }
     /*Right*/
-	.modal.right.fade .modal-dialog {
-		right: -320px;
-		-webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
-		   -moz-transition: opacity 0.3s linear, right 0.3s ease-out;
-		     -o-transition: opacity 0.3s linear, right 0.3s ease-out;
-		        transition: opacity 0.3s linear, right 0.3s ease-out;
-	}
-	
-	.modal.right.fade.in .modal-dialog {
-		right: 0;
-	}
+  .modal.right.fade .modal-dialog {
+    right: -320px;
+    -webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
+       -moz-transition: opacity 0.3s linear, right 0.3s ease-out;
+         -o-transition: opacity 0.3s linear, right 0.3s ease-out;
+            transition: opacity 0.3s linear, right 0.3s ease-out;
+  }
+  
+  .modal.right.fade.in .modal-dialog {
+    right: 0;
+  }
 
 /* ----- MODAL STYLE ----- */
-	.modal-content {
-		border-radius: 0;
-		border: none;
-	}
+  .modal-content {
+    border-radius: 0;
+    border: none;
+  }
 
-	.modal-header {
-		border-bottom-color: #EEEEEE;
-		background-color: #FAFAFA;
-	}
+  .modal-header {
+    border-bottom-color: #EEEEEE;
+    background-color: #FAFAFA;
+  }
   .loader2
   {
     position:absolute;
@@ -269,7 +269,7 @@ a div {
 </style>
         {# loader2................................................................... #}
 
-<div class="loader2"> 
+<div class="loader2" id="loader"> 
 
   <div class="body-loarder2">
     <div class="content-loader2"> </div>
@@ -303,7 +303,7 @@ a div {
            <div class="row" style="width: 100%; margin: 0;">
                <div class="col-md" style="padding-left: 0;">
                     <div class="card" style="padding: 5px; ">
-                      <br/>
+                        <br/>
                          <div class="row">
                         <div class="col-md-2" >
                             <label for="etablissement">Date:</label></br>
@@ -337,7 +337,7 @@ a div {
                                         <option value="{{promotion.id}}">{{promotion.designation}}</option>
                                     {% endfor %} 
                             </select>
-                        </div>
+                            </div>
                         <div class="col-md-2">
                             <label for="nature">Modifier Salle:</label>
                             <select data-child="niv3" class="form-control" name="nature" id="salle">
@@ -348,29 +348,30 @@ a div {
                             </select>
                         </div>
                         <div class=""  style=" margin-top: 5px; text-align: center";>
-</br>
-                           <button id="modisalle" type="button" class="btn btn-outline-warning btn-rounded waves-effect" style="    display: inline-block;"><i class="fas fa-edit"></i>&nbsp;&nbsp;Modifier</button>
-                           <button id="parlot" data-toggle="modal" data-target="#parlot_modal" type="button" class="btn btn-outline-info btn-rounded waves-effect" style="    display: inline-block;"><i class="fas fa-clock"></i>&nbsp;&nbsp;Par lot</button>
-
+                          </br>
+                            <button id="modisalle" type="button" class="btn btn-outline-warning btn-rounded waves-effect" style="    display: inline-block;"><i class="fas fa-edit"></i>&nbsp;&nbsp;Modifier</button>
+                            <button id="parlot" data-toggle="modal" data-target="#parlot_modal" type="button" class="btn btn-outline-info btn-rounded waves-effect" style="    display: inline-block;"><i class="fas fa-clock"></i>&nbsp;&nbsp;Par lot</button>
                         </div>
-                        <div class="col-md-2">
-<div class="dropdown-container" tabindex="-1" >
-  {# <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-left: 50px;margin-top: 23px;">
-    Action
-  </button> #}
-  {# <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" > #}
-  <div class="three-dots"></div>
-    <div class="dropdownA">
-      <a class="dropdown-item" id="remove"><i class="fas fa-redo pr-2" aria-hidden="true"></i>&nbsp;&nbsp;Reinisialiser</a>
-      <a class="dropdown-item" id="existe"><i class="fas fa-thumbtack pr-2" aria-hidden="true"></i>&nbsp;&nbsp;Existe</a>
-      <a class="dropdown-item" id="sign"><i class="fas fa-pen"></i>&nbsp;&nbsp;Signe</a>
-      <a class="dropdown-item" id="cancel"><i class="fas fa-ban" aria-hidden="true"></i>&nbsp;&nbsp;Anullée</a>
-    </div>
-  </div>
-</div>
+                        <div class="col-md-1">
+                            <div class="dropdown-container" tabindex="-1" >
+                              {# <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-left: 50px;margin-top: 23px;">
+                                Action
+                              </button> #}
+                              {# <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" > #}
+                              <div class="three-dots"></div>
+                                <div class="dropdownA">
+                                  <a class="dropdown-item" id="remove"><i class="fas fa-redo pr-2" aria-hidden="true"></i>&nbsp;&nbsp;Reinisialiser</a>
+                                  <a class="dropdown-item" id="existe"><i class="fas fa-thumbtack pr-2" aria-hidden="true"></i>&nbsp;&nbsp;Existe</a>
+                                  <a class="dropdown-item" id="sign"><i class="fas fa-pen"></i>&nbsp;&nbsp;Signe</a>
+                                  <a class="dropdown-item" id="cancel"><i class="fas fa-ban" aria-hidden="true"></i>&nbsp;&nbsp;Anullée</a>
+                                </div>
+                              </div>
+                            </div>
                         </div>
                     </div>
                     </br>
+                </div>
+            </div>
                    
 <div class="grid">
   <span>Categorie</span>
@@ -390,7 +391,7 @@ a div {
   {# <div class="box">0</div>
   <div class="box">0</div>
   <div class="box">0</div> #}
-	
+  
 </div>
 
 
@@ -494,6 +495,7 @@ button.addEventListener("click", function() {
 });
 </script>
 {% include 'assiduite/modals/etudiant.html.twig' %}
+{% include 'assiduite/modals/etudiant2.html.twig' %}
 {% include 'assiduite/modals/parlot.html.twig' %}
 {% include 'assiduite/modals/etudiant_det.html.twig' %}
 {% include 'assiduite/modals/pointage.html.twig' %}
