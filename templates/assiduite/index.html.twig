@@ -174,7 +174,11 @@ tr.highlighty{
 
 
   }
-  
+ .row2
+ {
+  margin:0!important;
+
+ } 
 .loader-circle {
   position: absolute;
   left: 50%;
@@ -222,7 +226,9 @@ tr.highlighty{
     transform: rotate(360deg);
   }
 }
-
+.three-dots{
+  position:relative;
+}
 .three-dots:after {
   cursor: pointer;
   color: #6777ef;
@@ -243,7 +249,8 @@ a div {
 
 .dropdownA {
   position: absolute;
-  right: 2px;
+  right: 3rem;
+  top:1rem;
   background-color: #ffffff;
   box-shadow: 0px 0px 3px 3px #c4e2e7;
   outline: none;
@@ -256,20 +263,28 @@ a div {
 .dropdown-container:focus {
   outline: none; 
 }
-.dropdown-container{
-  padding-left: 140px;
-}
 .dropdown-container:focus .dropdownA {
   opacity: 1;
   z-index: 100;
   max-height: 100vh;
   transition: opacity 0.2s, z-index 0.2s, max-height: 0.2s;
 }
-  
+.threepointscontainer{
+    position: absolute;
+    top: 2rem;
+    right: 0;
+    width:auto;
+    padding: 0;
+}
+
+
+.card-spacer{
+  margin-right: 10px;
+}  
 </style>
         {# loader2................................................................... #}
 
-<div class="loader2" id="loader"> 
+<div class="loader2"> 
 
   <div class="body-loarder2">
     <div class="content-loader2"> </div>
@@ -296,7 +311,7 @@ a div {
         </div>
 
         <div class="section-body">
-        <div class="card">
+        <div class="card card-spacer">
         {# <div class="card-header">
                 <h4>Traitement</h4>
             </div> #}
@@ -304,7 +319,7 @@ a div {
                <div class="col-md" style="padding-left: 0;">
                     <div class="card" style="padding: 5px; ">
                         <br/>
-                         <div class="row">
+                         <div class="row row2">
                         <div class="col-md-2" >
                             <label for="etablissement">Date:</label></br>
                                                     <input class="form-control" type="date" id="datetime" value="">
@@ -352,18 +367,19 @@ a div {
                             <button id="modisalle" type="button" class="btn btn-outline-warning btn-rounded waves-effect" style="    display: inline-block;"><i class="fas fa-edit"></i>&nbsp;&nbsp;Modifier</button>
                             <button id="parlot" data-toggle="modal" data-target="#parlot_modal" type="button" class="btn btn-outline-info btn-rounded waves-effect" style="    display: inline-block;"><i class="fas fa-clock"></i>&nbsp;&nbsp;Par lot</button>
                         </div>
-                        <div class="col-md-1">
+                        <div class="col-md-1 threepointscontainer">
                             <div class="dropdown-container" tabindex="-1" >
                               {# <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-left: 50px;margin-top: 23px;">
                                 Action
                               </button> #}
                               {# <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" > #}
-                              <div class="three-dots"></div>
+                              <div class="three-dots">
                                 <div class="dropdownA">
                                   <a class="dropdown-item" id="remove"><i class="fas fa-redo pr-2" aria-hidden="true"></i>&nbsp;&nbsp;Reinisialiser</a>
                                   <a class="dropdown-item" id="existe"><i class="fas fa-thumbtack pr-2" aria-hidden="true"></i>&nbsp;&nbsp;Existe</a>
                                   <a class="dropdown-item" id="sign"><i class="fas fa-pen"></i>&nbsp;&nbsp;Signe</a>
                                   <a class="dropdown-item" id="cancel"><i class="fas fa-ban" aria-hidden="true"></i>&nbsp;&nbsp;Anullée</a>
+                                </div>
                                 </div>
                               </div>
                             </div>
@@ -495,7 +511,6 @@ button.addEventListener("click", function() {
 });
 </script>
 {% include 'assiduite/modals/etudiant.html.twig' %}
-{% include 'assiduite/modals/etudiant2.html.twig' %}
 {% include 'assiduite/modals/parlot.html.twig' %}
 {% include 'assiduite/modals/etudiant_det.html.twig' %}
 {% include 'assiduite/modals/pointage.html.twig' %}
