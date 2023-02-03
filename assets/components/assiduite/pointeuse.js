@@ -86,8 +86,8 @@ deSelect();  // $("#parlot_modal").show();
         var currentRow = $(this).closest("tr");
         list_pointeuse = [];
         list_pointeuse.push({
-          sn: currentRow.find("td:eq(1)").html(),
-          ip: currentRow.find("td:eq(2)").html(),
+          sn: currentRow.find("td:eq(2)").html(),
+          ip: currentRow.find("td:eq(3)").html(),
         });
        
        

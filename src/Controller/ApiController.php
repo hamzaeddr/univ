@@ -52,6 +52,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 require '../zklib/zklib/ZKLib.php';
 
+
 // require __DIR__ . '../../../vendor/autoload.php';
 
 #[Route('/api')]
@@ -549,7 +550,7 @@ class ApiController extends AbstractController
                 WHEN min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))>=AddTime('$date1','00:31:00') AND min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))<=AddTime('$date1','00:45:59') THEN 'B'
                 WHEN min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))>AddTime('$date1','00:46:00') AND min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))<=AddTime('$date1','00:60:59') THEN 'C'
                 WHEN min(date_format(checkinout.CHECKTIME,'%H:%i:%s')) is NULL THEN 'D'
-             ELSE 'D'
+            --  ELSE 'D'
                 END AS categorie
               from userinfo
              inner join x_inscription_grp on userinfo.street = x_inscription_grp.code_admission
@@ -917,11 +918,11 @@ return $requete;
         $liste_etudiants = [];
 
 
-        try {
+        // try {
             self::pointeuse_ip($salle,'traite',$date,$this->em);
-        } catch (\Throwable $th) {
-            $status = 'error import';
-        }
+        // } catch (\Throwable $th) {
+            // $status = 'error import';
+        // }
 
 
         $requete_P = self::traitement_P($promotion,$module,$groupe,$date);
@@ -1174,7 +1175,9 @@ public function parlot(Request $request)
         LEFT JOIN ac_element ON ac_element.code=v_seance.element
         left JOIN psalles ON psalles.code=v_seance.code_salle
         LEFT JOIN penseignant ON penseignant.code=v_seance.enseignant
-        WHERE ac_etablissement.abreviation in ('FMA' ,'FMDA' , 'ISITS' , 'FASIMH' , 'FPA' , 'LAZ','EIG','EIA','MGS','CPGEA') AND ac_formation.abreviation IN ('IGPIP','MG','MD','IST','IP','IAR','IM','CAM','CAM - SIBOP','CAM - SIH','CPGEA','PH','PH_HOSPIT','PH_INDUST','IGPIP','GISIPA','MPSI','MP') and v_seance.date_seance like '$date%' AND v_seance.heure_debut>='$hd' AND v_seance.heure_fin<='$hf' ORDER BY v_seance.heure_debut";
+        WHERE ac_etablissement.abreviation in ('FMA' ,'FMDA' , 'ISITS' , 'FASIMH' , 'FPA' , 'LAZ','EIG','EIA','MGS','CPGEA') 
+        AND ac_formation.abreviation IN ('IGPIP','MG','MD','IST','IP','IAR','IM','CAM','CAM - SIBOP','CAM - SIH','CPGEA','PH','PH_HOSPIT','PH_INDUST','IGPIP','GISIPA','MPSI','MP') 
+        and v_seance.date_seance like '$date%' AND v_seance.heure_debut>='$hd' AND v_seance.heure_fin<='$hf' ORDER BY v_seance.heure_debut";
         $seances =  self::execute($requete,$this->em);
         $html = $this->render('assiduite/table/datatable_parlot.html.twig', [
             'seances' => $seances,
@@ -1278,13 +1281,18 @@ public function pointeuse_user(Request $request, $idsalle)
 #[Route('/pointeuse_att/{idsalle}/{date}', name: 'pointeuse_att')]
     public function pointeuse_att(Request $request, $idsalle,$date)
     {  
-        ini_set('memory_limit', '2G'); // or you could use 1G
+        // ini_set('memory_limit', '5G'); // or you could use 1G
 
         $ping =  self::ping($idsalle);
         if ($ping == 'yes') {
 
-             // $zk = new \ZKLib($idsalle, 4370, 'udp');
-        $zk = new \ZKLib('172.20.7.208', 4370, 'udp');
+            $list = [];
+
+            $users = "SELECT * FROM `userinfo`  
+            ORDER BY `badgenumber` ASC";
+           $users =  self::execute($users,$this->em);
+
+             $zk = new \ZKLib($idsalle, 4370);
         if ($zk->connect() == 'true') {
             $statut = "device connected";
         }
@@ -1294,27 +1302,41 @@ public function pointeuse_user(Request $request, $idsalle)
         }
         $ret = $zk->connect();
         $zk->disableDevice();
-        // $user_device = $zk->getAttendance($date);
-        // $user_device = $zk->getAttendance('2022-11-07');    
-        $user_device = $zk->getAttendance_date($date,$date); 
-        if (count($user_device) > 0) {
-            $user_device = $zk->getAttendance_date($date,$date); 
+        $empty = [];
+        $user_device = $zk->getAttendance($date);
 
+      
+       
+        // dd(count($user_device));
+        if (count($user_device) > 0) {
+           
+            foreach ($user_device as $key) {
+                foreach ($users as $u) {
+                   if ($key['id'] == $u['badgenumber']) {
+                    $list[] = [
+                        'street' => $u['street'],
+                        'name' => $u['name'],
+                        'id' => $u['userid'],
+                        'timestamp' => $key['timestamp']
+                    ];
+                   }
+                }
+            }
         }
         else{
         $user_device = ""; 
 
         }
-
+        // dd($list);
+        $zk->enableDevice();
+        $zk->disconnect();
         // dd(count($user_device));
-        $users = "SELECT * FROM `userinfo`  
-         ORDER BY `badgenumber` ASC";
-        // WHERE street not like 'F%' ORDER BY `badgenumber` ASC";
-        $users =  self::execute($users,$this->em);
+       
         $html = $this->render('assiduite/table/datatable_pointeuse_att.html.twig', [
-            'users' => $users,
-            'device_users' => $user_device,
+            'users' => $list,
+            // 'device_users' => $user_device,
        ])->getContent();
+       
                 }
                 else {
                     $html = 'pointeuse not connected';
@@ -1652,30 +1674,39 @@ if ($zk->connect() == 'true') {
                 $ret = $zk->connect();
                 $zk->disableDevice();
                 $sn = $zk->serialNumber();
+                $sn = substr($sn, 14, -1);
                 $attendance = $zk->getAttendance($date);
-                if (!empty($attendance)) {
+                $zk->enableDevice();
+                $zk->disconnect();
+                if (empty($attendance)) {
+                
+                   
+            
+                }
+                else{
                     $attendance = array_reverse($attendance, true);
                     foreach ($attendance as $attItem) {
+
                     $user = $em->getRepository(Userinfo::class)->findOneBy(['Badgenumber'=>$attItem['id']]);
                     if ($user) {
+
                         $date_ = new \DateTime($attItem["timestamp"]);
+                    // if (str_contains($attItem["timestamp"], $date)) { 
                       
                         $checkinout = new Checkinout;
                         $checkinout->setUSERID($user->getUSERID());
                         $checkinout->setSn($sn);
                         $checkinout->setCHECKTIME($date_);
-                        $checkinout->setMemoinfo("199");    
+                        $checkinout->setMemoinfo("1996_");    
                         $em->persist($checkinout);
             
-                    
+                    // }
                     }
                     else{
 
                     }
                 }
                     $em->flush();
-                   
-            
                 }
         $statut = "'".$idsalle."'device is connected";
 
