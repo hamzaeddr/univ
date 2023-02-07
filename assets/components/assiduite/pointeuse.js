@@ -98,32 +98,77 @@ deSelect();  // $("#parlot_modal").show();
     });
   
     $("body #connect_pointeuse").on("click", function () {
-      list_pointeuse.forEach((obj) => {
-   $.ajax({
-    type: "POST",
-    url: "/api/pointeuse_connect/" + obj.ip,
-    success: function (html) {
-      
-      if(html == 'true'){
-        Toast.fire({
-          icon: 'success',
-          title: 'Pointeuse connected',
-      })
-  
+      var val = [];
+      $(':checkbox:checked').each(function(i){
+        val[i] = $(this).val();
+      });
+      // alert(val);
+      if (val.length === 0) {
+        list_pointeuse.forEach((obj) => {
+          $.ajax({
+            type: "POST",
+            url: "/api/pointeuse_connect/" + obj.ip +"/ip",
+            success: function (html) {
+              
+              if(html == 'true'){
+                Toast.fire({
+                  icon: 'success',
+                  title: 'Pointeuse connected',
+              })
+          
+              }
+              else{
+                Toast.fire({
+                  icon: 'error',
+                  title: 'pointeuse not connected',
+              })
+          
+          
+          
+              }
+          
+            }
+              });
+           });
       }
       else{
-        Toast.fire({
-          icon: 'error',
-          title: 'pointeuse not connected',
-      })
-  
-  
-  
+      for(let value of val){
+        $.ajax({
+          type: "POST",
+          url: "/api/pointeuse_connect/" + value +"/sn",
+          
+          success: function (html) {
+            
+            if(html == 'true'){
+              $('.'+value).removeClass("desconnected").removeClass("connected").addClass("connected");
+
+              Toast.fire({
+                icon: 'success',
+                title: 'Pointeuse connected',
+            })
+        
+            }
+            else{
+        $('.'+value).removeClass("desconnected").removeClass("connected").addClass("desconnected");
+
+              Toast.fire({
+                icon: 'error',
+                title: 'pointeuse not connected',
+            })
+        
+        
+        
+            }
+        
+          },
+          error:function(){
+            
+          },
+          // timeout: 15000
+            });
       }
-  
-    }
-      });
-    });
+      }
+     
   
   });
   ///////////////att_pointeuse//////////

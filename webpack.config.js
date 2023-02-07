@@ -100,6 +100,7 @@ Encore
     "./assets/components/parametre/enseignantexcept.js"
   )
   .addEntry("assiduite", "./assets/components/assiduite/assiduite.js")
+  .addEntry("regularisation", "./assets/components/assiduite/regularisation.js")
   .addEntry("stage", "./assets/components/assiduite/stage.js")
   .addEntry("pointeuse", "./assets/components/assiduite/pointeuse.js")
   .addEntry("bord", "./assets/components/assiduite/bord.js")
