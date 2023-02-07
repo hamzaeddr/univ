@@ -16,7 +16,7 @@
 </table>
 <br/>
 <div class="row">
-  <div class="column left" >
+  <div class="column" >
    <table style="width: 100%;" cellspacing="0">
     <tbody>
       
@@ -24,7 +24,7 @@
         <tr>
             <td >Id Admission :  {{admission}} </td>
             <td >&nbsp;&nbsp;&nbsp;</td>
-            <td >&nbsp;&nbsp;&nbsp;</td>
+            <td >Etudiant : {{Nom}} {{Prenom}}</td>
             <td >&nbsp;&nbsp;&nbsp;</td>
             <td >&nbsp;&nbsp;&nbsp;</td>
         </tr>
@@ -37,9 +37,9 @@
         </tr>
        
         <tr>
-            <td >Etudiant : {{Nom}} {{Prenom}}</td>
+            <td >Etablissement : {{Etab}}</td>
             <td >&nbsp;&nbsp;&nbsp; </td>
-            <td >&nbsp;&nbsp;&nbsp;</td>
+            <td >Formation : {{for}}</td>
             <td >&nbsp;&nbsp;&nbsp;</td>
             <td >&nbsp;&nbsp;&nbsp;</td>
            
@@ -52,14 +52,14 @@
         <td style"width:1%"><hr/></td>
         </tr>
         <tr>
-            <td >Etablissement : {{Etab}}</td>
+            <td >Promotion : {{pro}}</td>
             <td ></td>
             <td ></td>
             <td ></td>
             <td ></td>
            
         </tr>
-         <tr>
+         {# <tr>
         <td style"width:95%"><hr/></td>
         <td style"width:1%"><hr/></td>
         <td style"width:1%"><hr/></td>
@@ -88,7 +88,7 @@
             <td ></td>
             <td ></td>
            
-        </tr>
+        </tr> #}
         <tr>
             <td >&nbsp;&nbsp;<h5 style="margin-left:100px;"> (A-Z) : Présent - B : Retard  C & D & AD & BD : Absent - P : Capitaliser </h5></td>
             

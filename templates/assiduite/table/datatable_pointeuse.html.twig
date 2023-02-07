@@ -16,8 +16,8 @@
   </thead>
   <tbody>
      {% for salle in salles %}
-                <tr>
-                <td><label class="container"><input name='chk' value="{{salle.IP}}" type="checkbox"><span class="checkmark"></span></label></td>
+                <tr class="{{salle.sn}}">
+                <td><label class="container"><input name='chk' value="{{salle.sn}}" type="checkbox"><span class="checkmark"></span></label></td>
                 <td>{{salle.designation}}</td>
                 <td>{{salle.sn}}</td>
                 <td>{{salle.IP}}</td>

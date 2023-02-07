@@ -26,6 +26,7 @@ use App\Entity\TOperationcab;
 use App\Entity\PNatureEpreuve;
 use App\Entity\AcEtablissement;
 use App\Entity\Checkinout;
+use App\Entity\Machines;
 use App\Entity\PlEmptime;
 use App\Entity\PrProgrammation;
 use App\Entity\PSalles;
@@ -1212,10 +1213,12 @@ public function pointeuse_aff(Request $request, $idsalle)
 }
 
 
-#[Route('/pointeuse_connect/{idsalle}', name: 'pointeuse_connect')]
-public function pointeuse_connect(Request $request, $idsalle)
+#[Route('/pointeuse_connect/{idsalle}/{type}', name: 'pointeuse_connect')]
+public function pointeuse_connect(Request $request, $idsalle,$type)
 {  
-    $ping =  self::ping($idsalle);
+    if ($type == "ip") {
+
+        $ping =  self::ping($idsalle);
     if ($ping == 'yes') {
 
         $zk = new \ZKLib($idsalle, 4370, 'udp');
@@ -1234,6 +1237,34 @@ public function pointeuse_connect(Request $request, $idsalle)
     
         
     }
+    }
+ //////////////////////////////////////////////////   
+    else {
+        $machine = $this->em->getRepository(Machines::class)->findOneBy(['sn'=>$idsalle]);
+        $idsalle = $machine->getIP();
+
+        $ping =  self::ping($idsalle);
+        // dd($ping);
+    if ($ping == 'yes') {
+
+        $zk = new \ZKLib($idsalle, 4370, 'udp');
+        if ($zk->connect() == 'true') {
+            $statut = "true";
+        }
+        else{
+            $statut = "false";
+
+        }
+        
+    }
+    else{
+        
+            $statut = "false";
+    
+        
+    }
+    }
+   
   
     // $ret = $zk->connect();
     // $zk->disableDevice();
@@ -1727,19 +1758,21 @@ return $statut;
 }
 static function ping($ip)
 {
-  $host=$ip;
+    $host=$ip;
 
-                exec("ping -n 2 " . $host, $output, $result);
+                exec("ping -n 4 " . $host, $output, $result);
+   
+    if (str_contains($output[2], "lors du transit") || str_contains($output[3], "Impossible") || str_contains($output[4], "faillance") || str_contains($output[5], "lors du transit")) { 
+ 
+        $status = 'no';
+
+        }
+    else{
+        $status = 'yes';
 
 
-                if ($result == 0){
-
-                $status = 'yes';
-                           }
-
-                else{
-                $status = 'no';
-                    }
+         }
+        //  dd($status);
                 return $status;
 
 }
@@ -1755,7 +1788,7 @@ static function ping($ip)
             FROM `psalles` 
             INNER JOIN iseance_salle ON iseance_salle.code_salle=psalles.code 
             INNER JOIN machines ON iseance_salle.id_pointeuse=machines.sn
-             where psalles.code='$salle' and machines.IP not in ('172.18.4.175','172.20.10.16') order by machines.IP";
+             where psalles.code='$salle' order by machines.IP";
 
             // where machines.IP  in  ('172.20.10.2','172.20.10.3','172.20.10.4','172.20.10.5','172.20.10.6','172.20.10.7'
             //             ,'172.20.10.8','172.20.10.9','172.20.10.10','172.20.10.11','172.20.10.12','172.20.10.13','172.20.10.14')";

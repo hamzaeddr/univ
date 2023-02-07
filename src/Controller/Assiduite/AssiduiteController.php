@@ -422,27 +422,28 @@ else {
         
         $mpdf = new Mpdf([
             'mode' => 'utf-8',
-            'margin_top' => 90,
+            // 'margin_top' => 60,
         ]);            
         $mpdf->SetTitle('Feuil');
-        $mpdf->SetHTMLHeader(
-            $this->render("assiduite/pdf/header_presentiel.html.twig"
-            , [
-                "count" =>$count,
-                "etud" =>$sean,
-                "date" =>$date2,
-                "admission" => $idadm,
-                "Nom" => $nom,
-                "Prenom" => $prenom,
-                "Etab" => $Etablisement,
-                "for" => $formation,
-                "pro" => $promotion,
-                "semain" => $semaine,
-                "annee" => $anne,
-                "modules" => $seanmodules,
-                "elements" => $seanelements
-            ])->getContent()
-        );
+        // $mpdf->SetHTMLHeader(
+        //     $this->render("assiduite/pdf/header_presentiel.html.twig"
+        //     , [
+        //         "count" =>$count,
+        //         "etud" =>$sean,
+        //         "date" =>$date2,
+        //         "admission" => $idadm,
+        //         "Nom" => $nom,
+        //         "Prenom" => $prenom,
+        //         "Etab" => $Etablisement,
+        //         "for" => $formation,
+        //         "pro" => $promotion,
+        //         "semain" => $semaine,
+        //         "annee" => $anne,
+        //         "modules" => $seanmodules,
+        //         "elements" => $seanelements
+        //     ])->getContent()
+        // );
+        
         $mpdf->WriteHTML($html);
         $mpdf->Output('fueil' , 'I');
 
