@@ -117,9 +117,9 @@ tr.highlightyerror{
         <div class="section-header">
           <h1>Assiduite</h1>
           <div class="section-header-breadcrumb" style="gap:1rem;">
-              {% for operation in operations %}
+              {# {% for operation in operations %}
                 <button class="{{operation.classTag}}" id="{{operation.idTag}}"><i class="{{operation.icon}}"></i>  {{operation.designation}}</button>
-              {% endfor %}
+              {% endfor %} #}
 
           </div>
         </div>
@@ -279,7 +279,7 @@ tr.highlightyerror{
 {% endblock %}
 {% block javascripts %}
 {{parent()}}
-{{ encore_entry_script_tags('assiduite') }}
+{{ encore_entry_script_tags('extraction_stage') }}
 
 
 {% endblock %}
