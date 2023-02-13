@@ -33,7 +33,7 @@ const Toast = Swal.mixin({
            url = "/api/regularisation_seance?file="+str;
     //  url = url.replace("assiduite/assiduites/", '');  
   
-  
+  alert(url);
            window.open(url);
              
   

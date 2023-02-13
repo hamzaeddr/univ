@@ -424,7 +424,11 @@ else {
             'mode' => 'utf-8',
             // 'margin_top' => 60,
         ]);            
+        // $mpdf->showImageErrors = true;
         $mpdf->SetTitle('Feuil');
+        $mpdf->showImageErrors = true;
+
+
         // $mpdf->SetHTMLHeader(
         //     $this->render("assiduite/pdf/header_presentiel.html.twig"
         //     , [
@@ -443,7 +447,6 @@ else {
         //         "elements" => $seanelements
         //     ])->getContent()
         // );
-        
         $mpdf->WriteHTML($html);
         $mpdf->Output('fueil' , 'I');
 
@@ -635,13 +638,13 @@ $date2 = strftime("%A %d %B %G", strtotime($date));
 
  $requete_promo_daily = "SELECT COUNT(xseance_absences.ID_Admission) as etud,xseance.ID_Promotion as promotion_code FROM xseance_absences 
                          INNER JOIN xseance ON xseance.ID_Séance=xseance_absences.ID_Séance 
-                         WHERE  xseance.Date_Séance='2022-09-20' GROUP by xseance.ID_Promotion
+                         WHERE  xseance.Date_Séance='$datetoday' GROUP by xseance.ID_Promotion
 ";
  $count_global_jr =  ApiController::execute($requete_promo_daily,$this->em);
 
  $requete_promo_abs = "SELECT COUNT(xseance.ID_Séance) as etud,xseance.ID_Promotion as promotion_code FROM xseance 
                          INNER JOIN xseance_absences ON xseance.ID_Séance=xseance_absences.ID_Séance
-                        WHERE xseance.Date_Séance='2022-09-20' AND (xseance_absences.Categorie='D' OR xseance_absences.Categorie='C'
+                        WHERE xseance.Date_Séance='$datetoday' AND (xseance_absences.Categorie='D' OR xseance_absences.Categorie='C'
                          OR xseance_absences.Categorie_Enseig='AD' OR xseance_absences.Categorie_Enseig='BD') GROUP BY xseance.ID_Promotion";
  $count_global_abs =  ApiController::execute($requete_promo_abs,$this->em);
 
@@ -657,19 +660,22 @@ $date2 = strftime("%A %d %B %G", strtotime($date));
         "count_global_jr" => $count_global_jr,
         "count_global_abs" => $count_global_abs,
         "date" =>$date2,
-        "dat" =>$date3
+        "dat" =>$date3,
+        "date_today" =>$TodayDate,
+
     ])->getContent();
 
     
     $mpdf = new Mpdf([
         'mode' => 'utf-8',
-        'margin_top' => 75,
+        'margin_top' => 45,
     ]);            
     $mpdf->SetTitle('Feuil');
     $mpdf->SetHTMLHeader(
         $this->render("assiduite/pdf/header_synthese.html.twig"
         , [
           
+        "date_today" =>$TodayDate,
            
             
         ])->getContent()
@@ -678,7 +684,8 @@ $date2 = strftime("%A %d %B %G", strtotime($date));
         $this->render("assiduite/pdf/footer_synthese.html.twig"
         , [
             "date" =>$date2,
-            "dat" =>$date3
+            "dat" =>$date3,
+            "date_today" =>$TodayDate,
             
         ])->getContent()
     );

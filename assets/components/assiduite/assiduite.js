@@ -126,10 +126,10 @@ function loader_hide() {
   $("#formation").prop("selectedIndex", 1);
   $("#promotion").prop("selectedIndex", 1);
   // -------------------------------------------------
-/////////////////////////////////dropdown-situation////////////////////////////
-  $("#E_situation").prop("selectedIndex", 1);
-  $("#F_situation").prop("selectedIndex", 1);
-  $("#P_situation").prop("selectedIndex", 1);
+// /////////////////////////////////dropdown-situation////////////////////////////
+//   $("#E_situation").prop("selectedIndex", 1);
+//   $("#F_situation").prop("selectedIndex", 1);
+//   $("#P_situation").prop("selectedIndex", 1);
 
 /////////////////////////////////////////////etablissement//////////
 
@@ -772,7 +772,9 @@ $("body #parlot_search").on("click", function () {
 //////////////////////////////// parlot_traitement ////////////////////////////////////
 
 $("body #parlot_traiter").on("click", async function () {
- 
+  var hd = $("#hd").val();
+  var hf = $("#hf").val();
+  var date = $("#datetime").val();
   let result;
       var val = [];
       $(':checkbox:checked').each(function(i){
@@ -804,6 +806,40 @@ $("body #parlot_traiter").on("click", async function () {
       console.error(error);
   }
       }
+      $.ajax({
+        type: "POST",
+        url: "/api/parlot",
+        data: {
+          hd: hd,
+          hf: hf,
+          date: date,
+         
+        },
+        success: function (html) {
+          $(".loader2").hide();
+          if ($.fn.DataTable.isDataTable("#parlot_datatable")) {
+              $("#parlot_datatable").DataTable().clear().destroy();
+          }
+          $("#parlot_datatable")
+            .html(html)
+            .DataTable({
+              bLengthChange: false,
+              lengthMenu: [
+                [11, 25, 35, 50, 100, 20000000000000],
+                [10, 15, 25, 50, 100, "All"],
+              ],
+              "font-size": "3rem",
+            });
+        },
+        error:function(){
+          $(".loader2").hide();
+    
+           Toast.fire({
+             icon: 'error',
+             title: 'Probleme  !',
+              });
+      },
+      });
       for(let value of val){
 
  window.open('/assiduite/assiduites/pdf/'+value, '_blank');
@@ -1105,6 +1141,17 @@ $.ajax({
   });
   });
 
+  ////////////////////////// PDF _ Synthese /////////////////////////////////////////////////////////////
+  $("body #synthese_seance").on("click", function () {
+    setInterval(function () {
+      loader_hide();
+  },1000);
+
+    var date = $("#datetime").val();
+    window.open('/assiduite/assiduites/pdfsynthese/'+date, '_blank');
+  });
+
+  ///////////////////////////////////////////////////////////////////////////////////////
 
   ///////////////////////////////////////////////////////////////////////////////////////
 

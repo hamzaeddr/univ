@@ -577,7 +577,6 @@ return $requete;
     $zk = new \ZKLib('172.20.10.17', 4370, 'udp');
     
     $zk->connect();
-    $zk->disableDevice();
     
     
     $attendace = $zk->getAttendance('2022-11-01');
@@ -595,6 +594,8 @@ return $requete;
 
 
     }
+    $zk->disableDevice();
+    $zk->disconnect();
     ///////////////////////////////////
      }
     ///get_insert///////////////////////
@@ -920,9 +921,9 @@ return $requete;
 
 
         // try {
-            self::pointeuse_ip($salle,'traite',$date,$this->em);
+        //     self::pointeuse_ip($salle,'traite',$date,$this->em);
         // } catch (\Throwable $th) {
-            // $status = 'error import';
+        //     $status = 'error import';
         // }
 
 
@@ -961,13 +962,13 @@ return $requete;
         else {
             $retraite_seance = self::retraite_seance($liste_etudiant_P,$seance,$this->em);                                                       
                              }
-    //     $requete_count = self::coun_categorie($seance);
-    //     $counts =  self::execute($requete_count,$this->em);
+        $requete_count = self::coun_categorie($seance);
+        $counts =  self::execute($requete_count,$this->em);
    
-    //     $html = $this->render('assiduite/modals/count.html.twig', [
-    //         'counts' => $counts,
-    //    ])->getContent();
-       return new JsonResponse(1);             
+        $html = $this->render('assiduite/modals/count.html.twig', [
+            'counts' => $counts,
+       ])->getContent();
+       return new JsonResponse($html);             
        
        
 
@@ -1143,8 +1144,8 @@ public function insert(Request $request)
 
 }
 }
-
-       
+$zk->disableDevice();
+$zk->disconnect();
            // $all='insert succesufly';
       
         return new JsonResponse($all);        
@@ -1265,7 +1266,8 @@ public function pointeuse_connect(Request $request, $idsalle,$type)
     }
     }
    
-  
+    $zk->disableDevice();
+    $zk->disconnect();
     // $ret = $zk->connect();
     // $zk->disableDevice();
     return new JsonResponse($statut);
@@ -1298,7 +1300,7 @@ public function pointeuse_user(Request $request, $idsalle)
 
     }
     $ret = $zk->connect();
-    $zk->disableDevice();
+    // $zk->disableDevice();
     $user_device = $zk->getUser();
     $users = "SELECT * FROM `userinfo`  WHERE street not like 'F%' ORDER BY `badgenumber` ASC";
     $users =  self::execute($users,$this->em);
@@ -1332,7 +1334,7 @@ public function pointeuse_user(Request $request, $idsalle)
     
         }
         $ret = $zk->connect();
-        $zk->disableDevice();
+        // $zk->disableDevice();
         $empty = [];
         $user_device = $zk->getAttendance($date);
 
@@ -1359,8 +1361,10 @@ public function pointeuse_user(Request $request, $idsalle)
 
         }
         // dd($list);
-        $zk->enableDevice();
-        $zk->disconnect();
+        // $zk->enableDevice();
+        // $zk->disconnect();
+        $zk->disableDevice();
+$zk->disconnect();
         // dd(count($user_device));
        
         $html = $this->render('assiduite/table/datatable_pointeuse_att.html.twig', [
@@ -1715,7 +1719,7 @@ if ($zk->connect() == 'true') {
             
                 }
                 else{
-                    $attendance = array_reverse($attendance, true);
+                    // $attendance = array_reverse($attendance, true);
                     foreach ($attendance as $attItem) {
 
                     $user = $em->getRepository(Userinfo::class)->findOneBy(['Badgenumber'=>$attItem['id']]);
