@@ -338,13 +338,14 @@ function loader_hide() {
   $("body #traite_epreuve").on("click", function () {
     var icon = $(this).find('i');
     var button = $(this);
-    button.attr("disabled", true);
 
     list.forEach((obj) => {
       if (obj.groupe === "") {
         obj.groupe = "empty";
       }
       if ( obj.statut != '1'){
+    button.attr("disabled", true);
+
       $(".loader2").show();
       icon.removeClass('fa-clock').addClass("fa-spinner fa-spin");
       $.ajax({
