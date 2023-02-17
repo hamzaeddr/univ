@@ -14,6 +14,7 @@ const Toast = Swal.mixin({
 $(document).ready(function () {
    
 //////////////////////////////// select all / unselect ////////////////////////////////////
+
 function selects(){  
   var ele=document.getElementsByName('chk');  
   for(var i=0; i<ele.length; i++){  

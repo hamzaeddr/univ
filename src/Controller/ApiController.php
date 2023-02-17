@@ -501,12 +501,12 @@ class ApiController extends AbstractController
      else {
          $concatenation = "AND (x_inscription_grp.niv_1='$groupe' OR x_inscription_grp.niv_2='$groupe' OR x_inscription_grp.niv_3='$groupe')";
      }
-     $requete = "SELECT x_inscription_grp.code_admission as adm,x_inscription_grp.nom,x_inscription_grp.prenom,'P' as categorie,'$date' as date
+     $requete = "SELECT x_inscription_grp.code_admission as adm,x_inscription_grp.nom,x_inscription_grp.prenom,'P' as categorie,'$date' as date,'00:00:00' as pointage
       FROM `xseance_capitaliser`
 
                 INNER JOIN x_inscription_grp ON xseance_capitaliser.id_admission=x_inscription_grp.code_admission
                 INNER JOIN ac_promotion ON ac_promotion.code=xseance_capitaliser.id_promotion
-                WHERE ac_promotion.id='$promotion' AND xseance_capitaliser.id_module='$module' $concatenation"; 
+                WHERE ac_promotion.id='$module' AND xseance_capitaliser.id_module='$promotion' $concatenation"; 
     return $requete;
 
  }
@@ -530,8 +530,20 @@ class ApiController extends AbstractController
 
  }
 
- static function traitement_abcd($promotion,$date,$date1,$date2,$salle,$groupe)
+  static function traitement_abcd($promotion,$date,$date1,$date2,$salle,$groupe)
  {
+        $heure1= date('H:i:s',strtotime('+15 minutes',strtotime($date1)));
+        $heure2= date('H:i:s',strtotime('+59 seconds',strtotime($heure1)));
+
+            $hd1= date('H:i:s',strtotime('-15 minutes',strtotime($heure1)));
+            $hf1= date('H:i:s',strtotime('+15 minutes',strtotime($heure2)));
+            $hd2= date('H:i:s',strtotime('+16 minutes',strtotime($heure1)));
+            $hf2= date('H:i:s',strtotime('+30 minutes',strtotime($heure2)));
+            $hd3= date('H:i:s',strtotime('+31 minutes',strtotime($heure1)));
+            $hf3= date('H:i:s',strtotime('+45 minutes',strtotime($heure2)));
+            $hd4= date('H:i:s',strtotime('-60 minutes',strtotime($heure1)));
+            $hf4= date('H:i:s',strtotime('+90 minutes',strtotime($heure2)));
+
     if ($groupe == 'empty') {
         $concatenation = "";
      }
@@ -539,26 +551,23 @@ class ApiController extends AbstractController
          $concatenation = "AND (x_inscription_grp.niv_1='$groupe' OR x_inscription_grp.niv_2='$groupe' OR x_inscription_grp.niv_3='$groupe')";
      }
      $date1 = date('H:i:s',strtotime($date1));
-    //  $date1 = date('H:i:s',strtotime($date1));
-// dd($date1);
-   $requete="SELECT DISTINCT userinfo.street as adm,x_inscription_grp.nom,x_inscription_grp.prenom,x_inscription_grp.Grp_Stg,min(date_format(checkinout.CHECKTIME,'%H:%i')) as pointage,'$date' as date,
-            --   CASE WHEN CHECKTIME>='$date1' AND CHECKTIME<=DATE_ADD('$date1', INTERVAL 30 MINUTE) THEN 'A'
-            --     WHEN CHECKTIME>=DATE_ADD('$date1', INTERVAL 31 MINUTE) AND CHECKTIME<=DATE_ADD('$date1', INTERVAL 44 MINUTE) THEN 'B'
-            --     WHEN CHECKTIME>=DATE_ADD('$date1', INTERVAL 45 MINUTE) AND CHECKTIME<=DATE_ADD('$date1', INTERVAL 60 MINUTE) THEN 'C'
-            --     WHEN CHECKTIME is NULL THEN 'D'
-            --     ELSE 'D'
-           CASE WHEN min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))>='$date1' AND min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))<=AddTime('$date1','00:30:59') THEN 'A'
-                WHEN min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))>=AddTime('$date1','00:31:00') AND min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))<=AddTime('$date1','00:45:59') THEN 'B'
-                WHEN min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))>AddTime('$date1','00:46:00') AND min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))<=AddTime('$date1','00:60:59') THEN 'C'
+   
+        $requete="SELECT DISTINCT userinfo.street as adm,x_inscription_grp.nom,x_inscription_grp.prenom,x_inscription_grp.Grp_Stg,min(date_format(checkinout.CHECKTIME,'%H:%i')) as pointage,'$date' as date,
+           
+            CASE WHEN min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))>='$hd1' AND min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))<='$hf1' THEN 'A'
+             WHEN min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))>='$hd2' AND min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))<='$hf2' THEN 'B'
+             WHEN min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))>='$hd3' AND min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))<='$hf3' THEN 'C'
+             WHEN min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))>='$hd4' AND min(date_format(checkinout.CHECKTIME,'%H:%i:%s'))<='$hf4' THEN 'D'
                 WHEN min(date_format(checkinout.CHECKTIME,'%H:%i:%s')) is NULL THEN 'D'
-            --  ELSE 'D'
+                ELSE 'D'
+  
                 END AS categorie
               from userinfo
              inner join x_inscription_grp on userinfo.street = x_inscription_grp.code_admission
              LEFT join checkinout on checkinout.USERID = userinfo.USERID
              LEFT JOIN iseance_salle ON checkinout.sn=iseance_salle.id_pointeuse
              WHERE x_inscription_grp.promotion='$promotion'  AND checkinout.CHECKTIME LIKE '$date%' AND iseance_salle.code_salle='$salle'
-             AND CHECKTIME>='$date1' AND CHECKTIME<='$date2' $concatenation GROUP BY userinfo.street ORDER BY x_inscription_grp.nom";
+             AND CHECKTIME>='$date $date1' AND CHECKTIME<='$date2' $concatenation GROUP BY userinfo.street ORDER BY x_inscription_grp.nom";
 return $requete;
   
  }
@@ -920,20 +929,20 @@ return $requete;
         $liste_etudiants = [];
 
 
-        // try {
-        //     self::pointeuse_ip($salle,'traite',$date,$this->em);
-        // } catch (\Throwable $th) {
-        //     $status = 'error import';
-        // }
+        try {
+            self::pointeuse_ip($salle,'traite',$date,$this->em);
+        } catch (\Throwable $th) {
+            $status = 'error import';
+        }
 
 
         $requete_P = self::traitement_P($promotion,$module,$groupe,$date);
-
+// dd($requete_P);
                        $etudiants_p =  self::execute($requete_P,$this->em);
                      
                              foreach($etudiants_p as $i) {
                                     array_push($liste_etudiant_P, ["id_admission" => $i['adm'], "nom" => $i['nom'], "prenom" => $i['prenom'], "categorie" => $i['categorie'],"pointage" => $i['pointage'],"date" => $i['date']]);
-                                    array_push($liste_etudiants, $i['adm']);
+                                    array_push($liste_etudiants,  "'".$i['adm']."'");
                                                    }
         $requete_abcd = self::traitement_abcd($promotion,$date,$newDateD,$newDateF,$salle,$groupe);
         // dd($requete_abcd);
@@ -944,6 +953,7 @@ return $requete;
                             array_push($liste_etudiants, "'".$i['adm']."'");
 
                                                        }
+
                                                        $liste_etudiants = implode(",", $liste_etudiants);
                             
         $requete_d = self::traitement_d($liste_etudiants,$promotion,$groupe,$date);
@@ -963,9 +973,15 @@ return $requete;
             $retraite_seance = self::retraite_seance($liste_etudiant_P,$seance,$this->em);                                                       
                              }
         $requete_count = self::coun_categorie($seance);
-        $counts =  self::execute($requete_count,$this->em);
+// <<<<<<< HEAD
+         $counts =  self::execute($requete_count,$this->em);
    
-        $html = $this->render('assiduite/modals/count.html.twig', [
+         $html = $this->render('assiduite/modals/count.html.twig', [
+// =======
+//         $counts =  self::execute($requete_count,$this->em);
+   
+//         $html = $this->render('assiduite/modals/count.html.twig', [
+// >>>>>>> eebca78d11fe43531d8303d7ba37e4484c0dcc17
             'counts' => $counts,
        ])->getContent();
        return new JsonResponse($html);             
