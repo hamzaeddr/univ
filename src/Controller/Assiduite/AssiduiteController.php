@@ -306,24 +306,43 @@ $result = $newstmt->fetchAll();
     }
 
     
-#[Route('/pdf_presentiel/{etudiant}', name: 'pdf_presentiel')]
-public function pdf_presentiel($etudiant)
+#[Route('/pdf_presentiel/{etudiant}/{semestre}', name: 'pdf_presentiel')]
+public function pdf_presentiel($etudiant,$semester)
 {
     ini_set("pcre.backtrack_limit", "50000000");
 
     // $semester = $_GET['sem'];
-    $semester = 1;  
+    // $semester = 2;  
     // $idadm = $_GET['idadm'];
     $idadm = $etudiant;
     // $idadm = 'ADM-FMA_MG00005097';
+   // soufiane....................................
+//    $semester = $_GET['semestre']; 
+//    dd($semestre);
+//    $etudiant = $request->request->get('etudiant');  
+ 
 
-if ($semester =="1") {
-    $dated = '2022-09-05';
+//   if ($semestre =='s1') {
+//    $dated = "2022-09-06";
+//    $datef = "2022-12-30";
+//   }
+//  elseif ($semestre =='s2') {
+//    $date = date("Y, n, j");
+//    // $date = $d.getFullYear()+'-'+($d.getMonth()+1)+'-'+$d.getDate();
+
+//    $dated = "2022-02-06";
+//    $datef = $date;  
+
+//  }
+if ($semester =="s1") {
+        $dated = '2022-09-06';
+        $date = '2022-12-30';
 }
 else {
-    $dated = '2022-02-07';
+    $dated = '2022-02-06';
     $TodayDate= new \DateTime();
     $date= date_format($TodayDate, 'Y-m-d');
+    $date = date( "Y-m-d", strtotime( $date . "-1 day"));
 }
 
     $TodayDate= new \DateTime();
@@ -568,10 +587,12 @@ $date2 = strftime("%A %d %B %G", strtotime($date));
     
     $mpdf = new Mpdf([
         'mode' => 'utf-8',
-        'margin_top' => 75,
+        'margin_top' => 95,
     ]);            
     $mpdf->SetTitle('Feuil');
     $mpdf->SetJS('this.print()');
+    // $mpdf->showImageErrors = true;
+
     $mpdf->SetHTMLHeader(
         $this->render("assiduite/pdf/header.html.twig"
         , [
