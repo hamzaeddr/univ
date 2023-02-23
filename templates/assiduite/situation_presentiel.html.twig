@@ -162,12 +162,21 @@ tr.highlightyerror{
                                 {% endfor %} 
                             </select>
                         </div>
-                        <div class="col-md-2" >
+                        {# soufiane................................. #}
+                        <div class="col-md-2" style="display: list-table;" >
+                           <input type="radio" id="date" name="date" value="s1">
+                           <label for="date">1ère semestre</label></br>
+
+                           <input type="radio" id="date" name="date" value="s2">
+                           <label for="date">2ème semestre </label></br>
+                           
+                        </div>
+                        <div class="col-md-4" >
                             <label for="etablissement">Choix Etudiant:</label>
                             <select  name="salle_pointeuse"  id="Et_situation" >
                                  <option value="0"> Select Etudiant</option>
                                 {% for Etud in etudiants %}
-                                    <option value="{{Etud.code_admission}}">{{Etud.nom}} {{Etud.prenom}}</option>
+                                    <option value="{{Etud.code_admission}}">{{Etud.code_admission}}  ||  {{Etud.nom}} {{Etud.prenom}} </option>
                                 {% endfor %} 
                             </select>
                         </div>
