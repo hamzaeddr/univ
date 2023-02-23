@@ -470,7 +470,7 @@ class ApiController extends AbstractController
  {
      $data = "<option selected enabled value=''>Choix ".$choix."</option>";
      foreach ($objects as $object) {
-         $data .="<option value=".$object['code_admission'].">".$object['nom']." ".$object['prenom']."</option>";
+         $data .="<option value=".$object['code_admission'].">".$object['code_admission']."  ||  ".$object['nom']." ".$object['prenom']."</option>";
       }
       return $data;
  }
@@ -535,13 +535,38 @@ class ApiController extends AbstractController
         $heure1= date('H:i:s',strtotime('+15 minutes',strtotime($date1)));
         $heure2= date('H:i:s',strtotime('+59 seconds',strtotime($heure1)));
 
+        if($promotion == 366 || $promotion == 365) {
+
+            if ( $heure1 == "08:00:00" ||  $heure1 == "10:00:00"){
+                $heure1= date('H:i:s',strtotime('-15 minutes',strtotime($heure1)));
+                $heure2= date('H:i:s',strtotime('+59 seconds',strtotime($heure1)));
+            }
+            elseif( $heure1 == "12:00:00"){
+
+                $heure1= date('H:i:s',strtotime('+0 minutes',strtotime($heure1)));
+                $heure2= date('H:i:s',strtotime('+59 seconds',strtotime($heure1)));
+            }
+            elseif( $heure1 == "14:00:00"){
+                $heure1= date('H:i:s',strtotime('+45 minutes',strtotime($heure1)));
+                $heure2= date('H:i:s',strtotime('+59 seconds',strtotime($heure1)));
+            }
+            elseif( $heure1 == "16:00:00"){
+                $heure1= date('H:i:s',strtotime('+45 minutes',strtotime($heure1)));
+                $heure2= date('H:i:s',strtotime('+59 seconds',strtotime($heure1)));
+            }
+            else{
+                $heure1= $heure1;
+                $heure2= date('H:i:s',strtotime('+59 seconds',strtotime($heure1)));
+            }
+        }
+
             $hd1= date('H:i:s',strtotime('-15 minutes',strtotime($heure1)));
             $hf1= date('H:i:s',strtotime('+15 minutes',strtotime($heure2)));
             $hd2= date('H:i:s',strtotime('+16 minutes',strtotime($heure1)));
             $hf2= date('H:i:s',strtotime('+30 minutes',strtotime($heure2)));
             $hd3= date('H:i:s',strtotime('+31 minutes',strtotime($heure1)));
             $hf3= date('H:i:s',strtotime('+45 minutes',strtotime($heure2)));
-            $hd4= date('H:i:s',strtotime('-60 minutes',strtotime($heure1)));
+            $hd4= date('H:i:s',strtotime('+46 minutes',strtotime($heure1)));
             $hf4= date('H:i:s',strtotime('+90 minutes',strtotime($heure2)));
 
     if ($groupe == 'empty') {
@@ -695,7 +720,8 @@ return $requete;
  }
  static function coun_categorie($idseance)
  {
-    $requete ="SELECT IF((STRCMP(categorie, 'A') = 0)or(STRCMP(categorie, 'P') = 0) or (STRCMP(categorie, 'Z') = 0),COUNT(id_admission),'0') as A,
+    // $requete ="SELECT IF((STRCMP(categorie, 'A') = 0)or(STRCMP(categorie, 'P') = 0) or (STRCMP(categorie, 'Z') = 0),COUNT(id_admission),'0') as A,
+    $requete ="SELECT IF((STRCMP(categorie, 'A') = 0),COUNT(id_admission),'0') as A,
                 IF(STRCMP(categorie, 'B') = 0,COUNT(id_admission),'0') as B,IF(STRCMP(categorie, 'C') = 0,COUNT(id_admission),'0') as C,IF(STRCMP(categorie, 'D') = 0,COUNT(id_admission),'0') as D
                 FROM `xseance_absences` WHERE `id_séance`=$idseance
                 GROUP BY categorie";
@@ -1404,6 +1430,7 @@ $zk->disconnect();
     #[Route('/aff_situation', name: 'aff_situation')]
     public function aff_situation(Request $request)
     {  
+        
        $etudiant = $request->request->get('etudiant');  
        $dated = $request->request->get('dated');  
        $datef = $request->request->get('datef');  
@@ -1726,7 +1753,11 @@ if ($zk->connect() == 'true') {
                 $zk->disableDevice();
                 $sn = $zk->serialNumber();
                 $sn = substr($sn, 14, -1);
-                $attendance = $zk->getAttendance($date);
+                try {
+                    $attendance = $zk->getAttendance($date);
+
+              
+                // $attendance = $zk->getAttendance($date);
                 $zk->enableDevice();
                 $zk->disconnect();
                 if (empty($attendance)) {
@@ -1748,7 +1779,7 @@ if ($zk->connect() == 'true') {
                         $checkinout->setUSERID($user->getUSERID());
                         $checkinout->setSn($sn);
                         $checkinout->setCHECKTIME($date_);
-                        $checkinout->setMemoinfo("1996_");    
+                        $checkinout->setMemoinfo("2202_");    
                         $em->persist($checkinout);
             
                     // }
@@ -1759,6 +1790,10 @@ if ($zk->connect() == 'true') {
                 }
                     $em->flush();
                 }
+            } catch (\Throwable $th) {
+                $statut = "'".$idsalle."'device is connected";
+                            
+                        }
         $statut = "'".$idsalle."'device is connected";
 
     }
