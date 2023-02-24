@@ -307,10 +307,9 @@ $result = $newstmt->fetchAll();
 
     
 #[Route('/pdf_presentiel/{etudiant}/{semestre}', name: 'pdf_presentiel')]
-public function pdf_presentiel($etudiant,$semester)
+public function pdf_presentiel($etudiant,$semestre)
 {
     ini_set("pcre.backtrack_limit", "50000000");
-
     // $semester = $_GET['sem'];
     // $semester = 2;  
     // $idadm = $_GET['idadm'];
@@ -334,19 +333,48 @@ public function pdf_presentiel($etudiant,$semester)
 //    $datef = $date;  
 
 //  }
-if ($semester =="s1") {
+
+// if ($semestre =="s1") {
+//         $dated = '2022-09-06';
+//         $date = '2022-12-30';
+// }
+//     elseif($semestre =="s2"){
+//         $dated = '2022-02-06';
+//         $TodayDate= new \DateTime();
+//         $date= date_format($TodayDate, 'Y-m-d');
+//         $date = date( "Y-m-d", strtotime( $date . "-1 day"));
+//     }
+//     else {
+//         $dated = '2022-09-06';
+
+//         $TodayDate= new \DateTime();
+//         $date= date_format($TodayDate, 'Y-m-d');
+//         $date = date( "Y-m-d", strtotime( $date . "-1 day"));
+//     }
+
+switch ($semestre) {
+    case "2":
+        $dated = '2023-02-06';
+        $TodayDate= new \DateTime();
+        $date= date_format($TodayDate, 'Y-m-d');
+        $date = date( "Y-m-d", strtotime( $date . "-1 day"));
+    break;
+
+    case "1":
+            $dated = '2022-09-06';
+            $date = '2022-12-30';
+        break;
+    
+    default:
         $dated = '2022-09-06';
-        $date = '2022-12-30';
-}
-else {
-    $dated = '2022-02-06';
-    $TodayDate= new \DateTime();
-    $date= date_format($TodayDate, 'Y-m-d');
-    $date = date( "Y-m-d", strtotime( $date . "-1 day"));
+        $TodayDate= new \DateTime();
+        $date= date_format($TodayDate, 'Y-m-d');
+        $date = date( "Y-m-d", strtotime( $date . "-1 day"));
+        
 }
 
     $TodayDate= new \DateTime();
-    $date= date_format($TodayDate, 'Y-m-d');
+    // $date= date_format($TodayDate, 'Y-m-d');
 
     $date3= date_format($TodayDate, 'Y-m-d');
     setlocale(LC_TIME, "fr_FR", "French");
@@ -374,7 +402,7 @@ else {
       WHERE xseance_absences.ID_Admission='$idadm' AND semaine.annee_s='2022/2023' 
       AND xseance.Date_Séance>='$dated' AND xseance.Date_Séance<='$date' AND (xseance.annulée is Null or xseance.annulée=0) ORDER BY xseance.Date_Séance";
 
-//    dd($mysql);
+//    dd($mysql);  
       
         $sean =  ApiController::execute($mysql,$this->em);
 
