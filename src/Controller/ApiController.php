@@ -1205,7 +1205,16 @@ public function parlot(Request $request)
         $hd = $request->request->get('hd');  
         $hf = $request->request->get('hf'); 
         $date = $request->request->get('date'); 
+        $type = $request->request->get('type'); 
+        // dd($type);
 
+        if ($type == "stage") {
+            $concatenation = " AND v_seance.nature_des = 'ST'";
+          }
+          else{
+           $concatenation = "";
+       
+          }
         // $TodayDate= new \DateTime(); 
         // $date= date_format($TodayDate, 'Y-m-d');
         // $date = '2022-10-03';
@@ -1221,7 +1230,7 @@ public function parlot(Request $request)
         LEFT JOIN penseignant ON penseignant.code=v_seance.enseignant
         WHERE ac_etablissement.abreviation in ('FMA' ,'FMDA' , 'ISITS' , 'FASIMH' , 'FPA' , 'LAZ','EIG','EIA','MGS','CPGEA') 
         AND ac_formation.abreviation IN ('IGPIP','MG','MD','IST','IP','IAR','IM','CAM','CAM - SIBOP','CAM - SIH','CPGEA','PH','PH_HOSPIT','PH_INDUST','IGPIP','GISIPA','MPSI','MP') 
-        and v_seance.date_seance like '$date%' AND v_seance.heure_debut>='$hd' AND v_seance.heure_fin<='$hf' ORDER BY v_seance.heure_debut";
+        and v_seance.date_seance like '$date%' AND v_seance.heure_debut>='$hd' AND v_seance.heure_fin<='$hf' $concatenation ORDER BY v_seance.heure_debut";
         $seances =  self::execute($requete,$this->em);
         $html = $this->render('assiduite/table/datatable_parlot.html.twig', [
             'seances' => $seances,
