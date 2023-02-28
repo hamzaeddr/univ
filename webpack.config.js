@@ -106,6 +106,8 @@ Encore
   .addEntry("bord", "./assets/components/assiduite/bord.js")
   .addEntry("situation_presentiel", "./assets/components/assiduite/situation_presentiel.js")
   .addEntry("extraction_stage", "./assets/components/assiduite/extraction_stage.js")
+  .addEntry("residanat", "./assets/components/assiduite/Residanat.js")
+
 
   // .addStyleEntry('login', './assets/styles/components/login/login.scss')
   // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)

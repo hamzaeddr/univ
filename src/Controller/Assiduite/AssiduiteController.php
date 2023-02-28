@@ -81,6 +81,7 @@ class AssiduiteController extends AbstractController
 
         ]);
     }
+    
 
 
     #[Route('/pointeuse', name: 'assiduite_assiduites_pointeuse')]
@@ -747,6 +748,144 @@ $date2 = strftime("%A %d %B %G", strtotime($date));
 
 
 }
+#[Route('/Residanat', name: 'assiduite_assiduites_Residanat')]
+public function Residanat(Request $request): Response
+{
 
+    $operations = ApiController::check($this->getUser(), 'assiduite_assiduites_Residanat', $this->em, $request);
+        if(!$operations) {
+        return $this->render("errors/403.html.twig");
+        }
+
+    return $this->render('assiduite/Residanat/Residanat_extraction.html.twig', [
+        'operations' => $operations,
+      
+    ]);
+  
+}
+
+   
+/**
+     * @Route("/excely/{element}/{from}/{to}", name="excely")
+     */
+    public function excely(Request $request , $element,$from,$to)
+     {  
+         $spreadsheet = new Spreadsheet();
+         $sheet = $spreadsheet->getActiveSheet();
+         
+         $sheet->setCellValue('A1', 'ID_ADMISSION');
+         $sheet->setCellValue('B1', 'ID_ADMISSION');
+         $sheet->setCellValue('C1', 'nom');
+         $sheet->setCellValue('D1', 'prenom');
+         $sheet->setCellValue('E1', 'Date');
+         $sheet->setCellValue('F1', 'HEUREDEPOINTAGEMINIMAL');
+         $sheet->setCellValue('G1', 'HEUREDEPOINTAGEMaximal');
+       
+  
+ 
+         $sheet->setTitle("My First Worksheet");
+         $count = 2;
+ 
+ 
+ 
+         $sqlr="SELECT DISTINCT x_inscription2.code_admission as ID_ETUDIANT,x_inscription2.code_admission as 
+                    ID_ADMISSION,x_inscription2.nom,x_inscription2.prenom,date_format(checkinout.CHECKTIME,'%Y-%m-%d') as Dat,
+                    min(date_format(checkinout.CHECKTIME,'%H:%i')) as HEUREDEPOINTAGEMINIMAL,max(date_format(checkinout.CHECKTIME,'%H:%i')) as HEUREDEPOINTAGEMaximal
+                                from userinfo
+                                inner join x_inscription2 on userinfo.street = x_inscription2.code_admission
+                                left join checkinout on checkinout.USERID = userinfo.USERID
+                                
+                    
+                                WHERE x_inscription2.code_admission='$element'
+                    
+                                AND CHECKTIME>='$from 05:00:00' and CHECKTIME<='$to 23:59:00' GROUP BY Dat";
+ 
+ 
+        $stmtr = $this->getDoctrine()->getConnection('Univ')->prepare($sqlr);
+        $stmtr->execute();
+        $resid = $stmtr->fetchAll(PDO::FETCH_OBJ);
+  
+        foreach($resid as $etudian){
+        
+            $sheet->setCellValue('A' . $count, $etudian->ID_ETUDIANT);
+            $sheet->setCellValue('B' . $count, $etudian->ID_ADMISSION);
+            $sheet->setCellValue('C' . $count, $etudian->nom);
+            $sheet->setCellValue('D' . $count, $etudian->prenom);
+            $sheet->setCellValue('E' . $count, $etudian->Dat);
+            $sheet->setCellValue('F' . $count, $etudian->HEUREDEPOINTAGEMINIMAL);
+            $sheet->setCellValue('G' . $count, $etudian->HEUREDEPOINTAGEMaximal);
+        
+        
+        
+        
+            $count = $count + 1;
+        }
+         // Create your Office 2007 Excel (XLSX Format)
+         $writer = new Xlsx($spreadsheet);
+         // Create a Temporary file in the system
+         $fileName = $element .".xlsx";
+         $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+         // Create the excel file in the tmp directory of the system
+         $writer->save($temp_file);
+         // Return the excel file as an attachment
+         return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+ 
+ 
+     }
+      /**
+     * @Route("/excelyr/{element}/{from}/{to}", name="excelyr")
+     */
+    public function excelyr(Request $request , $element,$from,$to)
+    {     
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        
+        $sheet->setCellValue('A1', 'ID_ADMISSION');
+        $sheet->setCellValue('B1', 'ID_ADMISSION');
+        $sheet->setCellValue('C1', 'nom');
+        $sheet->setCellValue('D1', 'prenom');
+        $sheet->setCellValue('E1', 'Date');
+        $sheet->setCellValue('F1', 'HEUREDEPOINTAGE');
+        $sheet->setTitle("My First Worksheet");
+        $count = 2;
+
+        $sqlr="SELECT DISTINCT x_inscription2.code_admission as ID_ETUDIANT,x_inscription2.code_admission as 
+
+        ID_ADMISSION,x_inscription2.nom,x_inscription2.prenom,date_format(checkinout.CHECKTIME,'%Y-%m-%d') as Dat,date_format(checkinout.CHECKTIME,'%H:%i') as HEUREDEPOINTAGE
+                      from userinfo
+                      inner join x_inscription2 on userinfo.street = x_inscription2.code_admission
+                      left join checkinout on checkinout.USERID = userinfo.USERID
+                     
+        
+                      WHERE x_inscription2.code_admission='$element'
+        
+                      AND CHECKTIME>='$from 05:00:00' and CHECKTIME<='$to 23:59:00' ";
+
+
+        $stmtr = $this->getDoctrine()->getConnection('Univ')->prepare($sqlr);
+        $stmtr->execute();
+        $resid = $stmtr->fetchAll(PDO::FETCH_OBJ);
+        foreach($resid as $etudian){
+
+            $sheet->setCellValue('A' . $count, $etudian->ID_ETUDIANT);
+            $sheet->setCellValue('B' . $count, $etudian->ID_ADMISSION);
+            $sheet->setCellValue('C' . $count, $etudian->nom);
+            $sheet->setCellValue('D' . $count, $etudian->prenom);
+            $sheet->setCellValue('E' . $count, $etudian->Dat);
+            $sheet->setCellValue('F' . $count, $etudian->HEUREDEPOINTAGE);
+
+        $count = $count + 1;
+  }
+
+        // Create your Office 2007 Excel (XLSX Format)
+        $writer = new Xlsx($spreadsheet);
+        // Create a Temporary file in the system
+        $fileName = $element .".xlsx";
+        $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+        // Create the excel file in the tmp directory of the system
+        $writer->save($temp_file);
+        // Return the excel file as an attachment
+        return $this->file($temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE);
+    }
    
 }
