@@ -34,8 +34,8 @@ $('select').select2();
 $("body #create_extractionRESIDANT").on("click", function () {
 var hd = $("#datetimeDsituation").val();
 var hf = $("#datetimeFsituation").val();
-alert(hf);
 var choixresidant = $('#P_residanat_etudiant option:selected').val();
+
 if($('input[name="details"]:checked'))
 {
   window.open('assiduite/assiduites/excelyr/'+choixresidant+"/"+hd+"/"+hf, '_blank');
