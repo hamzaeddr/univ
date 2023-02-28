@@ -433,6 +433,13 @@
         "/build/9755.58d5f244.js",
         "/build/extraction_stage.7289c43e.js"
       ]
+    },
+    "residanat": {
+      "js": [
+        "/build/runtime.de6b8033.js",
+        "/build/9755.58d5f244.js",
+        "/build/residanat.652ea6a3.js"
+      ]
     }
   }
 }
