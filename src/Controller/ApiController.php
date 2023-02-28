@@ -470,7 +470,7 @@ class ApiController extends AbstractController
  {
      $data = "<option selected enabled value=''>Choix ".$choix."</option>";
      foreach ($objects as $object) {
-         $data .="<option value=".$object['code_admission'].">".$object['code_admission']."  ||  ".$object['nom']." ".$object['prenom']."</option>";
+         $data .="<option value='".$object['code_admission']."'>".$object['code_admission']."  ||  ".$object['nom']." ".$object['prenom']."</option>";
       }
       return $data;
  }
@@ -1485,13 +1485,13 @@ $zk->disconnect();
             WHERE ac_formation.abreviation in ('MEI','ANP','REA','BM','HEC','RAD','NP','PD','GS','PN','CCV','CV','GO','GN','CAR','END','NRO','RTH','ONC','ORL', 'OPH','DRM','URL','TOR','RUM','NC','BC','OCH','PEP','PRD','PRT','ODF')
                 ";}
         
-//    dd($requete);
-        $residanatEtudiant =  self::execute($requete,$this->em);
-
-        $data = self::dropdownsituation($residanatEtudiant,'residanatEtudiant');
-           return new JsonResponse($data);
-    }
    
+        $residanatEtudiant =  self::execute($requete,$this->em);
+        $data = self::dropdownsituation($residanatEtudiant,'residanatEtudiant');
+        // dd($data);
+        return new JsonResponse($data);
+    }
+
            
     #[Route('/generate_extraction', name: 'assiduite_assiduites_generate_extraction')]
     public function generate_extraction(Request $request): Response

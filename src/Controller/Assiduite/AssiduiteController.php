@@ -765,9 +765,8 @@ public function Residanat(Request $request): Response
 }
 
    
-/**
-     * @Route("/excely/{element}/{from}/{to}", name="excely")
-     */
+
+    #[Route('/excely/{element}/{from}/{to}', name: 'excely')]
     public function excely(Request $request , $element,$from,$to)
      {  
          $spreadsheet = new Spreadsheet();
@@ -788,23 +787,22 @@ public function Residanat(Request $request): Response
  
  
  
-         $sqlr="SELECT DISTINCT x_inscription2.code_admission as ID_ETUDIANT,x_inscription2.code_admission as 
-                    ID_ADMISSION,x_inscription2.nom,x_inscription2.prenom,date_format(checkinout.CHECKTIME,'%Y-%m-%d') as Dat,
+         $sqlr="SELECT DISTINCT x_inscription_grp.code_admission as ID_ETUDIANT,x_inscription_grp.code_admission as 
+                    ID_ADMISSION,x_inscription_grp.nom,x_inscription_grp.prenom,date_format(checkinout.CHECKTIME,'%Y-%m-%d') as Dat,
                     min(date_format(checkinout.CHECKTIME,'%H:%i')) as HEUREDEPOINTAGEMINIMAL,max(date_format(checkinout.CHECKTIME,'%H:%i')) as HEUREDEPOINTAGEMaximal
                                 from userinfo
-                                inner join x_inscription2 on userinfo.street = x_inscription2.code_admission
+                                inner join x_inscription_grp on userinfo.street = x_inscription_grp.code_admission
                                 left join checkinout on checkinout.USERID = userinfo.USERID
                                 
                     
-                                WHERE x_inscription2.code_admission='$element'
+                                WHERE x_inscription_grp.code_admission='$element'
                     
                                 AND CHECKTIME>='$from 05:00:00' and CHECKTIME<='$to 23:59:00' GROUP BY Dat";
  
  
-        $stmtr = $this->getDoctrine()->getConnection('Univ')->prepare($sqlr);
-        $stmtr->execute();
-        $resid = $stmtr->fetchAll(PDO::FETCH_OBJ);
-  
+       
+        $resid = ApiController::execute($sqlr,$this->em);
+
         foreach($resid as $etudian){
         
             $sheet->setCellValue('A' . $count, $etudian->ID_ETUDIANT);
@@ -832,9 +830,9 @@ public function Residanat(Request $request): Response
  
  
      }
-      /**
-     * @Route("/excelyr/{element}/{from}/{to}", name="excelyr")
-     */
+
+     
+    #[Route('/excelyr/{element}/{from}/{to}', name: 'excelyr')]
     public function excelyr(Request $request , $element,$from,$to)
     {     
         $spreadsheet = new Spreadsheet();
@@ -849,22 +847,23 @@ public function Residanat(Request $request): Response
         $sheet->setTitle("My First Worksheet");
         $count = 2;
 
-        $sqlr="SELECT DISTINCT x_inscription2.code_admission as ID_ETUDIANT,x_inscription2.code_admission as 
+        $sqlr="SELECT DISTINCT x_inscription_grp.code_admission as ID_ETUDIANT,x_inscription_grp.code_admission as 
 
-        ID_ADMISSION,x_inscription2.nom,x_inscription2.prenom,date_format(checkinout.CHECKTIME,'%Y-%m-%d') as Dat,date_format(checkinout.CHECKTIME,'%H:%i') as HEUREDEPOINTAGE
+        ID_ADMISSION,x_inscription_grp.nom,x_inscription_grp.prenom,date_format(checkinout.CHECKTIME,'%Y-%m-%d') as Dat,date_format(checkinout.CHECKTIME,'%H:%i') as HEUREDEPOINTAGE
                       from userinfo
-                      inner join x_inscription2 on userinfo.street = x_inscription2.code_admission
+                      inner join x_inscription_grp on userinfo.street = x_inscription_grp.code_admission
                       left join checkinout on checkinout.USERID = userinfo.USERID
                      
         
-                      WHERE x_inscription2.code_admission='$element'
+                      WHERE x_inscription_grp.code_admission='$element'
         
                       AND CHECKTIME>='$from 05:00:00' and CHECKTIME<='$to 23:59:00' ";
 
 
-        $stmtr = $this->getDoctrine()->getConnection('Univ')->prepare($sqlr);
-        $stmtr->execute();
-        $resid = $stmtr->fetchAll(PDO::FETCH_OBJ);
+       
+        $resid = ApiController::execute($sqlr,$this->em);
+
+
         foreach($resid as $etudian){
 
             $sheet->setCellValue('A' . $count, $etudian->ID_ETUDIANT);
