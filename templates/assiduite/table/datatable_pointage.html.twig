@@ -1,0 +1,49 @@
+  <table id="dtDynamicVerticalScrollExample4" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%" height="80%">
+                    <thead>
+                          <tr>
+                          <th >ID Admission
+                          </th>
+                          <th >ID_User
+                          </th>
+                          <th >Etudiant
+                          </th>
+                          <th >Salle
+                          </th>
+                          <th >Heure Pointage
+                          </th>
+                         
+                          
+                          </tr>
+                    </thead>
+                    <tbody>
+   {% for etud in pointages %}
+                <tr>
+                <td>{{etud.code_admission}}</td>
+                <td>{{etud.userid}}</td>
+                <td>{{etud.name}}</td>  
+
+    {% set exist = 0 %}
+   {% for sal in salles %}
+    {% set exist = 1 %}
+
+   {% if sal.id_pointeuse == etud.sn %}
+                
+                <td>{{sal.abreviation}}</td>
+   {% endif %}         
+    {% endfor %}
+   {% if exist == 0 %}
+                <td>undefined</td>
+
+   {% endif %}         
+
+
+
+                <td>{{etud.checktime | date('H:i')}}</td>
+               
+                
+                </tr>
+                {% endfor %}
+    
+  </tbody>
+ 
+</table>
