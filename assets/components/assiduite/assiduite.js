@@ -27,6 +27,7 @@ function loader_hide() {
             type: "POST",
             url: "/api/Seance_aff/" + var1 + "/" + var2 + "/" + var3,
             success: function (html) {
+              $(".loader2").hide();
               if ($.fn.DataTable.isDataTable("#dtDynamicVerticalScrollExample")) {
                 $("#dtDynamicVerticalScrollExample").DataTable().clear().destroy();
               }
@@ -44,7 +45,6 @@ function loader_hide() {
             },
             error:function(){
              $(".loader2").hide();
-
               Toast.fire({
                 icon: 'error',
                 title: 'Probleme  !',
@@ -57,30 +57,28 @@ function loader_hide() {
 
 /////////////////dropdown-etdiants////////////////////////////
 
-        function etudiant_situation_affichage(var1) {
-
-          $(".loader2").show();
-            $.ajax({
-              type: "POST",
-              url: "/api/etud_aff_situation/" + var1,
-              success: function (html) {
-              // $(".loader2").hide();
-              loader_hide();
-              $("#Et_situation").html(html);   
-            
-              },
-               error:function(){
-            //  $(".loader2").hide();
-             loader_hide();
-
-              Toast.fire({
-                icon: 'error',
-                title: 'Probleme  !',
-                 });
-         }
+  function etudiant_situation_affichage(var1) {
+    $(".loader2").show();
+      $.ajax({
+        type: "POST",
+        url: "/api/etud_aff_situation/" + var1,
+        success: function (html) {
+        $(".loader2").hide();
+        // loader_hide();
+        $("#Et_situation").html(html);   
+      
+        },
+          error:function(){
+        $(".loader2").hide();
+      //  loader_hide();
+        Toast.fire({
+          icon: 'error',
+          title: 'Probleme  !',
             });
-            return var1;
-          }
+    }
+      });
+      return var1;
+    }
 ////////////////////////////////////////////////////////////////
 
           function highlight() {}
@@ -133,50 +131,52 @@ function loader_hide() {
 
 /////////////////////////////////////////////etablissement//////////
 
-            $("#etablissement").on("change", function () {
-              var etablissement = $(this).val();
-              $.ajax({
-                type: "POST",
-                url: "/api/Formation_aff/" + etablissement,
-                success: function (html) {
-                  $("#formation").html(html);
-                  $("#formation").prop("selectedIndex", 1);
+    $("#etablissement").on("change", function () {
+      $(".loader2").show();
+      var etablissement = $(this).val();
+      $.ajax({
+        type: "POST",
+        url: "/api/Formation_aff/" + etablissement,
+        success: function (html) {
+          $(".loader2").hide();
+          $("#formation").html(html);
+          $("#formation").prop("selectedIndex", 1);
 
-                  $.ajax({
-                    type: "POST",
-                    url: "/api/Promotion_aff/" + $("#formation").val(),
-                    success: function (html) {
-                      $("#promotion").html(html);
-                      $("#promotion").prop("selectedIndex", 1);
-                      seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
-                    },
-                    error:function(){
-                      $(".loader2").hide();
-         
-                       Toast.fire({
-                         icon: 'error',
-                         title: 'Probleme  !',
-                          });
-                  }
-                  });
-                },
-              });
-            });
+          $.ajax({
+            type: "POST",
+            url: "/api/Promotion_aff/" + $("#formation").val(),
+            success: function (html) {
+              $("#promotion").html(html);
+              $("#promotion").prop("selectedIndex", 1);
+              seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
+            },
+            error:function(){
+              $(".loader2").hide();
+                Toast.fire({
+                  icon: 'error',
+                  title: 'Probleme  !',
+                });
+            }
+          });
+        },
+      });
+    });
 ///////////////////////////////////////////////Fomation//////////
 
   $("#formation").on("change", function () {
+    $(".loader2").show();
     var formation = $(this).val();
     $.ajax({
       type: "POST",
       url: "/api/Promotion_aff/" + formation,
       success: function (html) {
+        $(".loader2").hide();
         $("#promotion").html(html);
         $("#promotion").prop("selectedIndex", 1);
         seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
       },
        error:function(){
              $(".loader2").hide();
-
               Toast.fire({
                 icon: 'error',
                 title: 'Probleme  !',
@@ -186,10 +186,10 @@ function loader_hide() {
   });
 ////////////////////////////////////////////////Promotion//////////
 
-          $("#promotion").on("change", function () {
-            var promotion = $(this).val();
-            seanceaffichage(promotion, $("#datetime").val(),'CR');
-          });
+  $("#promotion").on("change", function () {
+    var promotion = $(this).val();
+    seanceaffichage(promotion, $("#datetime").val(),'CR');
+  });
 ////////////////////////////////////////////////Date//////////
 
   $("#datetime").on("change", function () {
@@ -272,7 +272,6 @@ function loader_hide() {
       },
       error:function(){
         $(".loader2").hide();
-
          Toast.fire({
            icon: 'error',
            title: 'Probleme  !',
@@ -287,6 +286,7 @@ function loader_hide() {
 
   ////////////////////////////////:: pop up etudiant ////////////////////////////////////:
   $("body #dtDynamicVerticalScrollExample").on("dblclick", "tr", function () {
+
     $("#etudiant-modal").modal("toggle");
     $("#etudiant-modal").modal("show");
     list.forEach((obj) => {
@@ -325,7 +325,6 @@ function loader_hide() {
         },
         error:function(){
           $(".loader2").hide();
-
            Toast.fire({
              icon: 'error',
              title: 'Probleme  !',
@@ -336,6 +335,7 @@ function loader_hide() {
   });
 ////////////////////////////////:: traitement ////////////////////////////////////:
   $("body #traite_epreuve").on("click", function () {
+    $(".loader2").show();
     var icon = $(this).find('i');
     var button = $(this);
 
@@ -345,8 +345,7 @@ function loader_hide() {
       }
       if ( obj.statut != '1'){
     button.attr("disabled", true);
-
-      $(".loader2").show();
+      // $(".loader2").show();
       icon.removeClass('fa-clock').addClass("fa-spinner fa-spin");
       $.ajax({
         type: "POST",
@@ -357,10 +356,9 @@ function loader_hide() {
           type : 'traite',
         },
         success: function (html) {
+          $(".loader2").hide();
           icon.removeClass('fa-spinner fa-spin').addClass("fa-clock");
           button.attr("disabled", false);
-          $(".loader2").hide();
-
           seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
           Toast.fire({
             icon: 'success',
@@ -388,7 +386,7 @@ function loader_hide() {
      
     }
     else{
-      $(".loader2").fadeOut();
+      $(".loader2").hide();
       Toast.fire({
         icon: 'error',
         title: 'seance deja traité',
@@ -404,6 +402,7 @@ function loader_hide() {
   ////////////////////////////////:: retraiter  ////////////////////////////////////:
 
   $("body #retraiter_seance").on("click", function () {
+    $(".loader2").show();
     list.forEach((obj) => {
       if (obj.groupe === "") {
         obj.groupe = "empty";
@@ -422,6 +421,7 @@ function loader_hide() {
           type : 'retraite',
         },
         success: function (html) {
+          $(".loader2").hide();
           seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
           $(".grid").html(html);
           $("#traite_epreuve").hide();
@@ -438,7 +438,6 @@ function loader_hide() {
         },
         error:function(){
           $(".loader2").hide();
-
            Toast.fire({
              icon: 'error',
              title: 'Probleme  !',
@@ -450,6 +449,7 @@ function loader_hide() {
 
   ////////////////////////////////:: feuile pdf  ////////////////////////////////////:
   $("body #assiduite_print").on("click", function () {
+    $(".loader2").show();
     setInterval(function () {
       loader_hide();
   },1000);
@@ -476,7 +476,8 @@ function loader_hide() {
   ////////////////////////////////::  ////////////////////////////////////:
   ////////////////////////////////:: remove seance   ////////////////////////////////////:
   $("body #remove").on("click", function () {
-    $('.loader2').fadeIn();
+    // $('.loader2').fadeIn();
+    $(".loader2").show();
     list.forEach((obj) => {
 
       $.ajax({
@@ -506,14 +507,13 @@ function loader_hide() {
 
   ////////////////////////////////:: existe   ////////////////////////////////////:
   $("body #existe").on("click", function () {
+    $(".loader2").show();
     list.forEach((obj) => {
-
       $.ajax({
         type: "POST",
         url: "/api/exist_seance/"+obj.seance,
         data: {
-          seance: obj.seance,
-         
+        seance: obj.seance, 
         },
         success: function (html) {
           seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
@@ -521,7 +521,6 @@ function loader_hide() {
         },
         error:function(){
           $(".loader2").hide();
-
            Toast.fire({
              icon: 'error',
              title: 'Probleme  !',
@@ -535,7 +534,7 @@ function loader_hide() {
 
   ////////////////////////////////:: sign   ////////////////////////////////////:
   $("body #sign").on("click", function () {
-    
+    $(".loader2").show();
     list.forEach((obj) => {
 
       $.ajax({
@@ -552,11 +551,9 @@ function loader_hide() {
         })
           seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
           $(".loader2").hide();
-        
         },
         error:function(){
           $(".loader2").hide();
-
            Toast.fire({
              icon: 'error',
              title: 'Probleme  !',
@@ -570,7 +567,7 @@ function loader_hide() {
 
   ////////////////////////////////:: cancel   ////////////////////////////////////:
   $("body #cancel").on("click", function () {
-    $(".loader2").hide();
+    $(".loader2").show();
     list.forEach((obj) => {
 
       $.ajax({
@@ -586,7 +583,6 @@ function loader_hide() {
         },
         error:function(){
           $(".loader2").hide();
-
            Toast.fire({
              icon: 'error',
              title: 'Probleme  !',
@@ -601,7 +597,7 @@ function loader_hide() {
   ////////////////////////////////::  ////////////////////////////////////:
   ////////////////////////////////:: deverou  ////////////////////////////////////:
   $("body #deverouiller-modal").on("click", function () {
-    $(".loader2").hide();
+    $(".loader2").show();
     list.forEach((obj) => {
 
       $.ajax({
@@ -629,7 +625,7 @@ function loader_hide() {
 });
   ////////////////////////////////:: modifier_salle  ////////////////////////////////////:
   $("body #modisalle").on("click", function () {
-    $(".loader2").hide();
+    $(".loader2").show();
     var salle = $("#salle").val();
     
     list.forEach((obj) => {
@@ -642,6 +638,7 @@ function loader_hide() {
          
         },
         success: function (html) {
+          $(".loader2").hide();
           seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
           $(".loader2").hide();
         },
@@ -660,23 +657,21 @@ function loader_hide() {
 });
   ////////////////////////////////:: modifier_salle  ////////////////////////////////////:
   $("body #verouiller-modal").on("click", function () {
-    
+    $(".loader2").show();
     list.forEach((obj) => {
 
       $.ajax({
         type: "POST",
         url: "/api/lock_seance/"+obj.seance,
         data: {
-          seance: obj.seance,
-         
+        seance: obj.seance,
         },
         success: function (html) {
+          $(".loader2").hide();
           seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
-        
         },
         error:function(){
           $(".loader2").hide();
-
            Toast.fire({
              icon: 'error',
              title: 'Probleme  !',
@@ -717,12 +712,12 @@ $(".loader2").hide();
 //////////////////////////////// pointeuse check /uncheck ////////////////////////////////////
 
 $("body #p_check").click(function ()  {
-alert('ok');
+// alert('ok');
 selects();  // $("#parlot_modal").show();
  
 });
 $("body #p_uncheck").on("click", function () {
-alert('ok');
+// alert('ok');
 deSelect();  // $("#parlot_modal").show();
  
 });
@@ -730,7 +725,7 @@ deSelect();  // $("#parlot_modal").show();
 //////////////////////////////// parlot_hd-f ////////////////////////////////////
 
 $("body #parlot_search").on("click", function () {
-    
+  $(".loader2").show();
   var hd = $("#hd").val();
   var hf = $("#hf").val();
   var date = $("#datetime").val();
@@ -761,7 +756,6 @@ $("body #parlot_search").on("click", function () {
     },
     error:function(){
       $(".loader2").hide();
-
        Toast.fire({
          icon: 'error',
          title: 'Probleme  !',
@@ -773,6 +767,7 @@ $("body #parlot_search").on("click", function () {
 //////////////////////////////// parlot_traitement ////////////////////////////////////
 
 $("body #parlot_traiter").on("click", async function () {
+  $(".loader2").show();
   var hd = $("#hd").val();
   var hf = $("#hf").val();
   var date = $("#datetime").val();
@@ -834,7 +829,6 @@ $("body #parlot_traiter").on("click", async function () {
         },
         error:function(){
           $(".loader2").hide();
-    
            Toast.fire({
              icon: 'error',
              title: 'Probleme  !',
@@ -885,6 +879,7 @@ $("body #parlot_traiter").on("click", async function () {
   ///////////////etablissement//////////
 
   $("#E_situation").on("change", function () {
+    $(".loader2").show();
     var etablissement = $(this).val();
     $.ajax({
       type: "POST",
@@ -898,13 +893,13 @@ $("body #parlot_traiter").on("click", async function () {
           type: "POST",
           url: "/api/Promotion_aff/" + $("#F_situation").val(),
           success: function (html) {
+            $(".loader2").hide();
             $("#P_situation").html(html);
             $("#P_situation").prop("selectedIndex", 1);
             etudiant_situation_affichage($("#P_situation").val());
           },
           error:function(){
             $(".loader2").hide();
-
              Toast.fire({
                icon: 'error',
                title: 'Probleme  !',
@@ -914,7 +909,6 @@ $("body #parlot_traiter").on("click", async function () {
       },
       error:function(){
         $(".loader2").hide();
-
          Toast.fire({
            icon: 'error',
            title: 'Probleme  !',
@@ -925,6 +919,7 @@ $("body #parlot_traiter").on("click", async function () {
   ///////////////Fomation//////////
 
   $("#F_situation").on("change", function () {
+    $(".loader2").show();
     var formation = $(this).val();
     $.ajax({
       type: "POST",
@@ -938,7 +933,6 @@ $("body #parlot_traiter").on("click", async function () {
       },
       error:function(){
         $(".loader2").hide();
-
          Toast.fire({
            icon: 'error',
            title: 'Probleme  !',
@@ -949,6 +943,7 @@ $("body #parlot_traiter").on("click", async function () {
   ///////////////Promotion//////////
 
   $("#P_situation").on("change", function () {
+    $(".loader2").show();
     var promotion = $(this).val();
     etudiant_situation_affichage(promotion);
 
@@ -978,7 +973,7 @@ $("body #parlot_traiter").on("click", async function () {
             
  //////////////////extraction stage////////////////:
  $('#create_extraction_stage').click(function(){ 
-
+  $(".loader2").show();
   var to = $('#datetimeFsituation').val();
   var from = $('#datetimeDsituation').val();
   var service = $('#E_situation').val();
@@ -987,7 +982,7 @@ $("body #parlot_traiter").on("click", async function () {
 
 
   var tou =  $('input[name="tous"]:checked').val();
-  
+  $(".loader2").hide();
           // window.location.href = "{{ path('extraction') }}?To="+to+"&From="+from;
          url = "/api/generate_extraction?To="+to+"&From="+from+"&formation="+formation+"&promotion="+promotion+"&Service="+service+"&Tou="+tou+"&type=stage";
          service;
@@ -998,7 +993,7 @@ $("body #parlot_traiter").on("click", async function () {
   //////////////////////////etudiant details ////////////////////////////////////////////
 
   $("body #dtDynamicVerticalScrollExample2").on("dblclick", "tr", function () {
-   
+    $(".loader2").show();
     // alert(statut);
      list.forEach((obj) => {
     
@@ -1016,12 +1011,11 @@ $("body #parlot_traiter").on("click", async function () {
             
           },
           success: function (html) {
-            $('#modal_etud_det').html(html);
             $(".loader2").hide();
+            $('#modal_etud_det').html(html);
           },
           error:function(){
             $(".loader2").hide();
-
              Toast.fire({
                icon: 'error',
                title: 'Probleme  !',
@@ -1039,12 +1033,11 @@ $("body #parlot_traiter").on("click", async function () {
   //////////////////////////valider etudiant details ////////////////////////////////////////////
 
   $("body #save_etud_det").on("click", function () {
+    $(".loader2").show();
     let justif = 0;
     if ($('input.justifier').is(':checked')) {
       justif = 1;
-
     }
-
     $.ajax({
       type: "POST",
       url: "/api/Etud_details_valide",
@@ -1058,6 +1051,7 @@ $("body #parlot_traiter").on("click", async function () {
         
       },
       success: function (html) {
+        $(".loader2").hide();
         list.forEach((obj) => {
           $.ajax({
             type: "POST",
@@ -1069,6 +1063,7 @@ $("body #parlot_traiter").on("click", async function () {
               existe: obj.existe,
             },
             success: function (html) {
+              $(".loader2").hide();
               if ($.fn.DataTable.isDataTable("#dtDynamicVerticalScrollExample2")) {
                 $("#dtDynamicVerticalScrollExample2").DataTable().clear().destroy();
               }
@@ -1101,8 +1096,7 @@ $("body #parlot_traiter").on("click", async function () {
   //////////////////////////Pointage ////////////////////////////////////////////
 
   $("body #pointage").on("click", function () {
-    
-
+    $(".loader2").show();
 list.forEach((obj) => {
   if (obj.statut == 1) {
 
@@ -1115,6 +1109,7 @@ $.ajax({
     hd: obj.hd,
   },
   success: function (html) {
+    $(".loader2").hide();
     if ($.fn.DataTable.isDataTable("#dtDynamicVerticalScrollExample4")) {
       $("#dtDynamicVerticalScrollExample4").DataTable().clear().destroy();
     }
@@ -1144,6 +1139,7 @@ $.ajax({
 
   ////////////////////////// PDF _ Synthese /////////////////////////////////////////////////////////////
   $("body #synthese_seance").on("click", function () {
+    $(".loader2").show();
     setInterval(function () {
       loader_hide();
   },1000);

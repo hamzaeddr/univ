@@ -14,13 +14,12 @@ $(document).ready(function () {
   /////////////////dropdown-etdiants////////////////////////////
 
   function etudiant_situation_affichage(var1) {
-
-      $(".loader").show();
+    $(".loader2").show();
         $.ajax({
           type: "POST",
           url: "/api/etud_aff_situation/" + var1,
           success: function (html) {
-      $(".loader").hide();
+            $(".loader2").hide();
       $("#Et_situation").html(html);   
         
           },
@@ -33,11 +32,13 @@ $(document).ready(function () {
  ///////////////etablissement//////////
 
  $("#E_situation").on("change", function () {
+  $(".loader2").show();
   var etablissement = $(this).val();
   $.ajax({
     type: "POST",
     url: "/api/Formation_aff/" + etablissement,
     success: function (html) {
+      $(".loader2").hide();
       $("#F_situation").html(html);
       $("#F_situation").prop("selectedIndex", 1);
 
@@ -45,6 +46,7 @@ $(document).ready(function () {
         type: "POST",
         url: "/api/Promotion_aff/" + $("#F_situation").val(),
         success: function (html) {
+          $(".loader2").hide();
           $("#P_situation").html(html);
           $("#P_situation").prop("selectedIndex", 1);
           etudiant_situation_affichage($("#P_situation").val());
@@ -58,11 +60,13 @@ $(document).ready(function () {
 ///////////////Fomation//////////
 
 $("#F_situation").on("change", function () {
+  $(".loader2").show();
   var formation = $(this).val();
   $.ajax({
     type: "POST",
     url: "/api/Promotion_aff/" + formation,
     success: function (html) {
+      $(".loader2").hide();
       $("#P_situation").html(html);
       $("#P_situation").prop("selectedIndex", 1);
       etudiant_situation_affichage($("#P_situation").val());
@@ -80,6 +84,7 @@ $("#P_situation").on("change", function () {
 
 ////////////////////////////////:: situation presentil pdf  ////////////////////////////////////:
 $("body #situation_presentiel").on("click", function () {
+  $(".loader2").show();
   // list.forEach((obj) => {
     var etudiant = $("#Et_situation").val();
     // soufiane...................................
@@ -88,6 +93,7 @@ $("body #situation_presentiel").on("click", function () {
     // var date_fin = $("#datetimeFsituation").val();
 
   window.open('/assiduite/assiduites/pdf_presentiel/'+etudiant+'/'+semestre, '_blank');
+  $(".loader2").hide();
 
 
 });    
@@ -95,7 +101,7 @@ $("body #situation_presentiel").on("click", function () {
           
 //////////////////extraction////////////////:
 $('#create_extraction').click(function(){ 
-
+  $(".loader2").show();
   var to = $('#datetimeFsituation').val();
   var from = $('#datetimeDsituation').val();
   var service = $('#E_situation').val();
@@ -108,7 +114,8 @@ $('#create_extraction').click(function(){
           // window.location.href = "{{ path('extraction') }}?To="+to+"&From="+from;
          url = "/api/generate_extraction?To="+to+"&From="+from+"&formation="+formation+"&promotion="+promotion+"&Service="+service+"&Tou="+tou+"&type=normal";;
          window.open(url);
-           
+         $(".loader2").hide();
+
 
 // });
 });
@@ -117,6 +124,7 @@ $('#create_extraction').click(function(){
 
 
 $("body #situation_search").on("click", function () {
+  $(".loader2").show();
   etudiant = $("#Et_situation").val();
   dated = $("#datetimeDsituation").val();
   datef = $("#datetimeFsituation").val();
@@ -129,6 +137,7 @@ $("body #situation_search").on("click", function () {
       datef : datef ,
     },
     success: function (html) {
+      $(".loader2").hide();
       if ($.fn.DataTable.isDataTable("#dtDynamicVerticalScrollExample_situation")) {
         $("#dtDynamicVerticalScrollExample_situation").DataTable().clear().destroy();
       }

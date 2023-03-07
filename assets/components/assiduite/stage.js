@@ -10,7 +10,7 @@ const Toast = Swal.mixin({
   },
 });
 $(document).ready(function () {
-
+  // $(".loader2").hide();
   var tableData = [];
 
   
@@ -76,6 +76,12 @@ $("#dtDynamicVerticalScrollExample").DataTable({
   seanceaffichage(promotion, today,'stage');
 
 
+
+ 
+  $("#parlot").on("click", function () {
+    $(".loader2").hide();
+    
+    });
 ///////////////etablissement//////////
 
 $("#etablissement").on("change", function () {
@@ -312,8 +318,7 @@ $("body #dtDynamicVerticalScrollExample").on("dblclick", "tr", function () {
 //////////////////////////Pointage ////////////////////////////////////////////
 
 $("body #pointage").on("click", function () {
-  
-
+  $(".loader2").show();
 list.forEach((obj) => {
   if (obj.statut == 1) {
 
@@ -326,6 +331,7 @@ $.ajax({
     hd: obj.hd,
   },
   success: function (html) {
+    $(".loader2").hide();
     if ($.fn.DataTable.isDataTable("#dtDynamicVerticalScrollExample4")) {
       $("#dtDynamicVerticalScrollExample4").DataTable().clear().destroy();
     }
@@ -356,6 +362,7 @@ $.ajax({
 
 ////////////////////////////////:: traitement ////////////////////////////////////:
 $("body #traite_epreuve").on("click", function () {
+  $(".loader2").show();
   list.forEach((obj) => {
     if (obj.groupe === "") {
       obj.groupe = "empty";
@@ -414,6 +421,7 @@ $("body #traite_epreuve").on("click", function () {
 ////////////////////////////////:: retraiter  ////////////////////////////////////:
 
 $("body #retraiter_seance").on("click", function () {
+  $(".loader2").show();
   // $(".loader2").hide();
   list.forEach((obj) => {
     if (obj.groupe === "") {
@@ -468,6 +476,7 @@ $("body #assiduite_print").on("click", function () {
 ////////////////////////////////::  ////////////////////////////////////:
 ////////////////////////////////:: remove seance   ////////////////////////////////////:
 $("body #remove").on("click", function () {
+  $(".loader2").show();
   list.forEach((obj) => {
 
     $.ajax({
@@ -496,6 +505,7 @@ $("body #remove").on("click", function () {
 
 ////////////////////////////////:: existe   ////////////////////////////////////:
 $("body #existe").on("click", function () {
+  $(".loader2").show();
   list.forEach((obj) => {
 
     $.ajax({
@@ -525,6 +535,7 @@ $("body #existe").on("click", function () {
 
 ////////////////////////////////:: sign   ////////////////////////////////////:
 $("body #sign").on("click", function () {
+  $(".loader2").show();
   list.forEach((obj) => {
 
     $.ajax({
@@ -558,6 +569,7 @@ $("body #sign").on("click", function () {
 
 ////////////////////////////////:: cancel   ////////////////////////////////////:
 $("body #cancel").on("click", function () {
+  $(".loader2").show();
   list.forEach((obj) => {
 
     $.ajax({
@@ -588,6 +600,7 @@ $("body #cancel").on("click", function () {
 ////////////////////////////////::  ////////////////////////////////////:
 ////////////////////////////////:: deverou  ////////////////////////////////////:
 $("body #deverouiller-modal").on("click", function () {
+  $(".loader2").show();
   list.forEach((obj) => {
 
     $.ajax({
@@ -616,6 +629,7 @@ $("body #deverouiller-modal").on("click", function () {
 });
 ////////////////////////////////:: modifier_salle  ////////////////////////////////////:
 $("body #modisalle").on("click", function () {
+  $(".loader2").show();
   var salle = $("#salle").val();
   
   list.forEach((obj) => {
@@ -645,7 +659,7 @@ $("body #modisalle").on("click", function () {
 });
 ////////////////////////////////:: modifier_salle  ////////////////////////////////////:
 $("body #verouiller-modal").on("click", function () {
-  
+  $(".loader2").show();
   list.forEach((obj) => {
 
     $.ajax({
@@ -658,7 +672,6 @@ $("body #verouiller-modal").on("click", function () {
       success: function (html) {
         seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
         $(".loader2").hide();
-      
       },
       error:function(){
         $(".loader2").hide();
@@ -673,14 +686,21 @@ $("body #verouiller-modal").on("click", function () {
  
 });
  
+// $("button").on("click", function () {
+// $('.loader2').fadeIn();
+// });
+
+// $(".close").on("click", function () {
+// $('.loader2').fadeOut();
+// });
 $("button").on("click", function () {
-$('.loader2').fadeIn();
-});
-
-$(".close").on("click", function () {
-$('.loader2').fadeOut();
-});
-
+  $('.loader2').show();
+  });
+  
+  $(".close").on("click", function () {
+  $('.loader2').hide();
+  });
+  
 
 
 
@@ -688,7 +708,7 @@ $('.loader2').fadeOut();
 /////////////////////////////// parlot_hd-f ////////////////////////////////////
 
 $("body #parlot_search").on("click", function () {
-  
+  $(".loader2").show();
 var hd = $("#hd").val();
 var hf = $("#hf").val();
 var date = $("#datetime").val();
@@ -721,7 +741,6 @@ $.ajax({
   },
   error:function(){
     $(".loader2").hide();
-
      Toast.fire({
        icon: 'error',
        title: 'Probleme  !',
@@ -735,6 +754,7 @@ $.ajax({
 //////////////////////////////// parlot_traitement ////////////////////////////////////
 
 $("body #parlot_traiter").on("click", async function () {
+  $(".loader2").show();
 var hd = $("#hd").val();
 var hf = $("#hf").val();
 var date = $("#datetime").val();
@@ -796,7 +816,6 @@ let result;
       },
       error:function(){
         $(".loader2").hide();
-  
          Toast.fire({
            icon: 'error',
            title: 'Probleme  !',
@@ -804,12 +823,35 @@ let result;
     },
     });
     for(let value of val){
-
-window.open('/assiduite/assiduites/pdf/'+value, '_blank');
-
+      window.open('/assiduite/assiduites/pdf/'+value, '_blank');
     }
-    $(".loader2").hide();
 ////////////////////////////////////////////////////////////////////:
 });
 
+/////////////////////////////// parlot ////////////////////////////////////
+function selects(){  
+  var ele=document.getElementsByName('chk');  
+  for(var i=0; i<ele.length; i++){  
+      if(ele[i].type=='checkbox')  
+          ele[i].checked=true;  
+  }  
+}  
+function deSelect(){  
+  var ele=document.getElementsByName('chk');  
+  for(var i=0; i<ele.length; i++){  
+      if(ele[i].type=='checkbox')  
+          ele[i].checked=false;  
+        
+  }  
+}          
+$("body #check").on("click", function () {
+// alert('ok');
+selects();  // $("#parlot_modal").show();
+$(".loader2").hide();
+});
+$("body #uncheck").on("click", function () {
+// alert('ok');
+deSelect();  // $("#parlot_modal").show();
+$(".loader2").hide();
+});
 });

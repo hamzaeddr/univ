@@ -1134,12 +1134,7 @@ public function zk(Request $request)
 #[Route('/insert', name: 'insert')]
 public function insert(Request $request)
 {  
-  
-  
-
-                                 
-  
-                                    $zk = new \ZKLibrary("172.20.4.1", 4370);
+    $zk = new \ZKLibrary("172.20.4.1", 4370);
 
         $zk->connect();
         // $attendaces = $zk->getAttendance();
@@ -1147,9 +1142,6 @@ public function insert(Request $request)
         $sn = $zk->getSerialNumber();
         
       
-       
-
-
     
         foreach ($attendaces as $att ){
             $sqluser="SELECT userinfo.USERID,userinfo.USERID as exis
@@ -1248,14 +1240,12 @@ public function parlot(Request $request)
 #[Route('/pointeuse_aff/{idsalle}', name: 'pointeuse_aff')]
 public function pointeuse_aff(Request $request, $idsalle)
 {  
-  
-        
-        $TodayDate= new \DateTime(); 
-
+    $TodayDate= new \DateTime(); 
         $requete="SELECT DISTINCT iseance_salle.code_salle,psalles.designation,machines.sn,machines.IP 
         FROM `psalles` 
         INNER JOIN iseance_salle ON iseance_salle.code_salle=psalles.code
         INNER JOIN machines ON iseance_salle.id_pointeuse=machines.sn where psalles.code='$idsalle'";
+        // dd($requete);
         $salles =  self::execute($requete,$this->em);
         $html = $this->render('assiduite/table/datatable_pointeuse.html.twig', [
             'salles' => $salles,
@@ -1263,7 +1253,25 @@ public function pointeuse_aff(Request $request, $idsalle)
        return new JsonResponse($html);
 
 }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// #[Route('/ResidanatImporte', name: 'pointeuse_residanat')]
+// public function pointeuse_residanat(Request $request)
+// {  
+//     // $TodayDate= new \DateTime(); 
+//     //     $requete="SELECT DISTINCT iseance_salle.code_salle,psalles.designation,machines.sn,machines.IP 
+//     //     FROM `psalles` 
+//     //     INNER JOIN iseance_salle ON iseance_salle.code_salle=psalles.code
+//     //     INNER JOIN machines ON iseance_salle.id_pointeuse=machines.sn where psalles.code='SAL00017'";
 
+//     //     $residanat =  self::execute($requete,$this->em);
+    
+
+//     //     $response = $this->forward('App\Controller\ResidanatImp::show', [
+//     //         'residanat' => $residanat,
+//     //     ]);
+//     //            return new JsonResponse($response);
+
+// }
 
 #[Route('/pointeuse_connect/{idsalle}/{type}', name: 'pointeuse_connect')]
 public function pointeuse_connect(Request $request, $idsalle,$type)
@@ -1899,43 +1907,7 @@ static function ping($ip)
             // dd('else');
             $data = self::pointeuse_insert($salle,'sn',$date,$em);
 
-            // $zk = new \ZKLib("$salle", 4370, "udp");
-
-            // if ($zk->connect() == 'true') {
-            //     $statut = "device connected";
-            //     $ret = $zk->connect();
-            //     $sn = $zk->serialNumber();
-            //     $zk->disableDevice();
-            //         $attendance = $zk->getAttendance($date);
-            //         // $attendance = $zk->getAttendance_date($date,$date);
-            //         if (count($attendance) > 0) {
-            //             $attendance = array_reverse($attendance, true);
-            //             foreach ($attendance as $attItem) {
-            //             $user = $em->getRepository(Userinfo::class)->findOneBy(['Badgenumber'=>$attItem['id']]);
-            //             if ($user) {
-            //                 $date_ = new \DateTime($attItem["timestamp"]);
-            //                 // $check = $this->em->getRepository(checkinout::class)->findBy(['USERID'=>$user->getUSERID(), 'CHECKTIME' => $date]);
-            //                    $checkinout = new Checkinout;
-            //                    $checkinout->setUSERID($user->getUSERID());
-            //                    $checkinout->setSn($sn);
-            //                    $checkinout->setCHECKTIME($date_);
-            //                    $checkinout->setMemoinfo("test4");
-            //                    $em->persist($checkinout);
-                
-                
-                          
-            //             }
-            //         }
-            //             $em->flush();
-            //             $statut = "insert avec success";
-            
-                  
-            //         }
-            // }
-            // else {
-            //     $statut = "device is not connected.";
-        
-            // }
+           
            
         }
         
