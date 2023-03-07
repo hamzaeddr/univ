@@ -18,6 +18,7 @@ const Toast = Swal.mixin({
  ///////////////etablissement//////////
 
  $("#E_situation").on("change", function () {
+  $(".loader2").show();
     var etablissement = $(this).val();
     $.ajax({
       type: "POST",
@@ -50,7 +51,7 @@ const Toast = Swal.mixin({
 
          Toast.fire({
            icon: 'error',
-           title: 'Probleme  !',
+           title: 'Probleme Technique!',
             });
     },
     });
@@ -58,6 +59,7 @@ const Toast = Swal.mixin({
   ///////////////Fomation//////////
 
   $("#F_situation").on("change", function () {
+    $(".loader2").show();
     var formation = $(this).val();
     $.ajax({
       type: "POST",

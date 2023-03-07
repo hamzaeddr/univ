@@ -11,12 +11,13 @@ use App\Entity\TOperationdet;
 use App\Entity\AcEtablissement;
 use App\Controller\ApiController;
 use Doctrine\Persistence\ManagerRegistry;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 
 
 #[Route('/assiduite/assiduites')]
@@ -62,6 +63,7 @@ class AssiduiteController extends AbstractController
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }
+        // dd($operations);
         $etbalissements =  $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1,'assiduite'=>1]);
         $formations = $this->em->getRepository(AcFormation::class)->findBy(['etablissement'=>1,'assiduite'=>1]);
         $promotions = $this->em->getRepository(AcPromotion::class)->findBy(['formation'=>1, 'active' => 1],['id'=>'ASC']);
@@ -287,22 +289,12 @@ $result = $newstmt->fetchAll();
          $stmt_ = $this->em->getConnection()->prepare($salle_);
          $stmt_ = $stmt_->executeQuery();    
          $sean_ = $stmt_->fetchAll();
-         
-
 
      }
 
-
-
-    
-   
-   
-    
-
-
      return $this->render('assiduite/salle.html.twig', [
- "salle" =>$sean,
- "sallee" =>$sean_ ]); 
+        "salle" =>$sean,
+        "sallee" =>$sean_ ]); 
       
     }
 
@@ -757,6 +749,7 @@ public function Residanat(Request $request): Response
         return $this->render("errors/403.html.twig");
         }
 
+    
     return $this->render('assiduite/Residanat/Residanat_extraction.html.twig', [
         'operations' => $operations,
       
@@ -764,7 +757,29 @@ public function Residanat(Request $request): Response
   
 }
 
-   
+#[Route('/ResidanatImp', name: 'assiduite_assiduites_Residanat_importe')]
+public function Residanatimp(Request $request): Response
+{
+    $operations = ApiController::check($this->getUser(), 'assiduite_assiduites_Residanat', $this->em, $request);
+    // dd($operations);
+        if(!$operations) {
+        return $this->render("errors/403.html.twig");
+        }
+        
+        $requete="SELECT DISTINCT iseance_salle.code_salle,psalles.designation,machines.sn,machines.IP 
+        FROM `psalles` 
+        INNER JOIN iseance_salle ON iseance_salle.code_salle=psalles.code
+        INNER JOIN machines ON iseance_salle.id_pointeuse=machines.sn where psalles.code='SAL000177'";
+        $stmt_ = $this->em->getConnection()->prepare($requete);
+        $stmt_ = $stmt_->executeQuery();    
+        $residanat = $stmt_->fetchAll();
+        // dd($residanat);
+    return $this->render('assiduite/Residanat/Residanat_importe.html.twig', [
+        'operations' => $operations,
+        'residanat' => $residanat,
+    ]);
+  
+}
 
     #[Route('/excely/{element}/{from}/{to}', name: 'excely')]
     public function excely(Request $request , $element,$from,$to)
@@ -790,19 +805,17 @@ public function Residanat(Request $request): Response
          $sqlr="SELECT DISTINCT x_inscription_grp.code_admission as ID_ETUDIANT,x_inscription_grp.code_admission as 
                     ID_ADMISSION,x_inscription_grp.nom,x_inscription_grp.prenom,date_format(checkinout.CHECKTIME,'%Y-%m-%d') as Dat,
                     min(date_format(checkinout.CHECKTIME,'%H:%i')) as HEUREDEPOINTAGEMINIMAL,max(date_format(checkinout.CHECKTIME,'%H:%i')) as HEUREDEPOINTAGEMaximal
-                                from userinfo
-                                inner join x_inscription_grp on userinfo.street = x_inscription_grp.code_admission
-                                left join checkinout on checkinout.USERID = userinfo.USERID
-                                
-                    
-                                WHERE x_inscription_grp.code_admission='$element'
-                    
-                                AND CHECKTIME>='$from 05:00:00' and CHECKTIME<='$to 23:59:00' GROUP BY Dat";
+                from userinfo
+                inner join x_inscription_grp on userinfo.street = x_inscription_grp.code_admission
+                left join checkinout on checkinout.USERID = userinfo.USERID
+                WHERE x_inscription_grp.code_admission='$element'
+                AND CHECKTIME>='$from 05:00:00' and CHECKTIME<='$to 23:59:00' GROUP BY Dat";
  
- 
+//  dd($sqlr);
+       
        
         $resid = ApiController::execute($sqlr,$this->em);
-
+        // dd($resid);
         foreach($resid as $etudian){
         
             $sheet->setCellValue('A' . $count, $etudian->ID_ETUDIANT);
@@ -848,21 +861,16 @@ public function Residanat(Request $request): Response
         $count = 2;
 
         $sqlr="SELECT DISTINCT x_inscription_grp.code_admission as ID_ETUDIANT,x_inscription_grp.code_admission as 
-
-        ID_ADMISSION,x_inscription_grp.nom,x_inscription_grp.prenom,date_format(checkinout.CHECKTIME,'%Y-%m-%d') as Dat,date_format(checkinout.CHECKTIME,'%H:%i') as HEUREDEPOINTAGE
-                      from userinfo
-                      inner join x_inscription_grp on userinfo.street = x_inscription_grp.code_admission
-                      left join checkinout on checkinout.USERID = userinfo.USERID
-                     
-        
-                      WHERE x_inscription_grp.code_admission='$element'
-        
-                      AND CHECKTIME>='$from 05:00:00' and CHECKTIME<='$to 23:59:00' ";
-
-
+                ID_ADMISSION,x_inscription_grp.nom,x_inscription_grp.prenom,date_format(checkinout.CHECKTIME,'%Y-%m-%d') as Dat,date_format(checkinout.CHECKTIME,'%H:%i') as HEUREDEPOINTAGE
+            from userinfo
+            inner join x_inscription_grp on userinfo.street = x_inscription_grp.code_admission
+            left join checkinout on checkinout.USERID = userinfo.USERID
+            WHERE x_inscription_grp.code_admission='$element'
+            AND CHECKTIME>='$from 05:00:00' and CHECKTIME<='$to 23:59:00' ";
+            // dd($sqlr);
        
         $resid = ApiController::execute($sqlr,$this->em);
-
+        // dd($resid);
 
         foreach($resid as $etudian){
 

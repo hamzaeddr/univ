@@ -107,6 +107,7 @@ Encore
   .addEntry("situation_presentiel", "./assets/components/assiduite/situation_presentiel.js")
   .addEntry("extraction_stage", "./assets/components/assiduite/extraction_stage.js")
   .addEntry("residanat", "./assets/components/assiduite/Residanat.js")
+  .addEntry("ResidanatImp", "./assets/components/assiduite/importresidanat.js")
 
 
   // .addStyleEntry('login', './assets/styles/components/login/login.scss')

@@ -1,0 +1,25 @@
+<table id="dtDynamicVerticalScrollresidanat_pointeuse" class="table table-striped table-bordered table-sm" cellspacing="0"  width="100%" height="100%">
+    <thead>
+        <tr>
+            <th>X
+            </th>
+            <th>Salle
+            </th>
+            <th>Sn
+            </th>
+            <th>Ip 
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for residanat in residanat %}
+            <tr class="{{residanat.sn}}">
+                <td><label class="container"><input name='chk' value="{{residanat.sn}}" type="checkbox"><span class="checkmark"></span></label></td>
+                <td>{{residanat.designation}}</td>
+                <td>{{residanat.sn}}</td>
+                <td>{{residanat.IP}}</td>   
+            </tr>
+        {% endfor %}
+    </tbody>
+ 
+</table>
