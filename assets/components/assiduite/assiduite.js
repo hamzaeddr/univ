@@ -490,7 +490,6 @@ function loader_hide() {
         success: function (html) {
           seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
           $(".loader2").hide();
-        
         },
         error:function(){
           $(".loader2").hide();
@@ -575,7 +574,6 @@ function loader_hide() {
         url: "/api/cancel_seance/"+obj.seance,
         data: {
           seance: obj.seance,
-         
         },
         success: function (html) {
           seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
@@ -627,9 +625,7 @@ function loader_hide() {
   $("body #modisalle").on("click", function () {
     $(".loader2").show();
     var salle = $("#salle").val();
-    
     list.forEach((obj) => {
-
       $.ajax({
         type: "POST",
         url: "/api/modifier_salle/"+obj.seance+"/"+salle,
@@ -638,7 +634,7 @@ function loader_hide() {
          
         },
         success: function (html) {
-          $(".loader2").hide();
+          // $(".loader2").hide();
           seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
           $(".loader2").hide();
         },
@@ -667,8 +663,8 @@ function loader_hide() {
         seance: obj.seance,
         },
         success: function (html) {
-          $(".loader2").hide();
           seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
+          $(".loader2").hide();
         },
         error:function(){
           $(".loader2").hide();
@@ -765,7 +761,9 @@ $("body #parlot_search").on("click", function () {
  
 });
 //////////////////////////////// parlot_traitement ////////////////////////////////////
-
+function url_open(value) {
+  window.open('/assiduite/assiduites/pdf/'+value, '_blank');
+}
 $("body #parlot_traiter").on("click", async function () {
   $(".loader2").show();
   var hd = $("#hd").val();
@@ -776,32 +774,50 @@ $("body #parlot_traiter").on("click", async function () {
       $(':checkbox:checked').each(function(i){
         val[i] = $(this).val();
       });
-      for(let value of val){
-    try {
-      // const request = await axios.post('/administration/epreuve/import', {
-      //   seance: value,
-      //   date: $("#datetime").val(),
-      //   type : 'traite',
-      // });
+        for(let value of val){
+          // window.open('https://www.google.com/', '_blank');
+          try {
+              result = await $.ajax({
+                type: "POST",
+                url: "/api/traitement_assiduite",
+                data: {
+                    seance: value,
+                    date: $("#datetime").val(),
+                    type : 'traite',
+                },
+                // success: function () {
+                //     // alert(value);
+                //     url_open(value)
+                //     window.open('/assiduite/assiduites/pdf/'+value, '_blank');
+                // },
 
-      result = await $.ajax({
-        type: "POST",
-        url: "/api/traitement_assiduite",
-        data: {
-          seance: value,
-          date: $("#datetime").val(),
-          type : 'traite',
-        },
-//         success: function (html) {
-// alert(html);
-//     // window.open('/assiduite/assiduites/pdf/'+html, '_blank');
-//   },
-
-      });
-} catch (error) {
-      console.error(error);
-  }
-      }
+              });
+              // window.open('https://www.google.com/', '_blank');
+              // alert(value);
+              // window.open('/assiduite/assiduites/pdf/'+value, '_blank');
+            } 
+          catch (error) {
+              console.error(error);
+            }
+            // window.open('/assiduite/assiduites/pdf/'+value, '_blank');
+            // var a = document.createElement("a");    
+            // a.href = '/assiduite/assiduites/pdf/'+value;    
+            // var evt = document.createEvent("MouseEvents");    
+            // //the tenth parameter of initMouseEvent sets ctrl key    
+            // evt.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0,true, false, false, false, 0, null);    
+            // a.dispatchEvent(evt);
+          
+        }
+        
+        // for(let value of val){
+        //   var a = document.createElement("a");    
+        //     a.href = '/assiduite/assiduites/pdf/'+value;    
+        //   var evt = document.createEvent("MouseEvents");    
+        //   //the tenth parameter of initMouseEvent sets ctrl key    
+        //   evt.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0,true, false, false, false, 0, null);    
+        //   a.dispatchEvent(evt);
+          
+        // }
       $.ajax({
         type: "POST",
         url: "/api/parlot",
@@ -812,9 +828,9 @@ $("body #parlot_traiter").on("click", async function () {
          
         },
         success: function (html) {
-          $(".loader2").hide();
           if ($.fn.DataTable.isDataTable("#parlot_datatable")) {
               $("#parlot_datatable").DataTable().clear().destroy();
+              $(".loader2").hide();
           }
           $("#parlot_datatable")
             .html(html)
@@ -826,23 +842,25 @@ $("body #parlot_traiter").on("click", async function () {
               ],
               "font-size": "3rem",
             });
+            $(".loader2").hide();
         },
-        error:function(){
-          $(".loader2").hide();
-           Toast.fire({
-             icon: 'error',
-             title: 'Probleme  !',
+          error:function(){
+            $(".loader2").hide();
+            Toast.fire({
+                icon: 'error',
+                title: 'Probleme  !',
               });
-      },
+          },
       });
+      // for(let value of val){
+      //   // const pdfPath = '/assiduite/assiduites/pdf/'+value;
+      //   // window.open(pdfPath, '_blank');
+      // //  console.log(val);
+      // }
       for(let value of val){
-
- window.open('/assiduite/assiduites/pdf/'+value, '_blank');
-
+        window.open('/assiduite/assiduites/pdf/'+value, '_blank');
       }
-      $(".loader2").hide();
-  ////////////////////////////////////////////////////////////////////:
-});
+      });
 
 
 
@@ -1169,5 +1187,9 @@ $(".close").on("click", function () {
 
 
 });
+
 /////////////////////////////////////////////////soufiane ///////////////////////////////////////////////////////////////
+// $("body #parlot").on("click",function () {
+//   $(".loader2").hide();
+// });
 

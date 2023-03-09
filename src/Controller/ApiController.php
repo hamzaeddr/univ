@@ -965,8 +965,7 @@ return $requete;
         $requete_P = self::traitement_P($promotion,$module,$groupe,$date);
 // dd($requete_P);
                        $etudiants_p =  self::execute($requete_P,$this->em);
-                     
-                             foreach($etudiants_p as $i) {
+                            foreach($etudiants_p as $i) {
                                     array_push($liste_etudiant_P, ["id_admission" => $i['adm'], "nom" => $i['nom'], "prenom" => $i['prenom'], "categorie" => $i['categorie'],"pointage" => $i['pointage'],"date" => $i['date']]);
                                     array_push($liste_etudiants,  "'".$i['adm']."'");
                                                    }

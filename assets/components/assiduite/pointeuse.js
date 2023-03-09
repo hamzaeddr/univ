@@ -186,6 +186,15 @@ $("#salle_pointeuse").on("change", function () {
 $("#att_pointeuse").on("click", function () {
   $(".loader2").show();
   var date = $("#datetime_pointeuse").val();
+  if (!date) {
+    Toast.fire({
+      icon: 'error',
+      title: 'Veuillez remplir la date  !',
+      });
+        // alert("Veuillez remplir la date");
+        $(".loader2").hide();
+    return;
+  }
   list_pointeuse.forEach((obj) => {
     $.ajax({
       type: "POST",
@@ -261,6 +270,15 @@ $("#user_pointeuse").on("click", function () {
 $("#download_pointeuse").on("click", function () {
   $(".loader2").show();
   var date = $("#datetime_pointeuse").val();
+  if (!date) {
+    Toast.fire({
+      icon: 'error',
+      title: 'Veuillez remplir la date  !',
+      });
+        // alert("Veuillez remplir la date");
+        $(".loader2").hide();
+    return;
+  }
   list_pointeuse.forEach((obj) => {
     $.ajax({
       type: "POST",

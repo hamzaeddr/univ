@@ -495,7 +495,7 @@ switch ($semestre) {
 #[Route('/pdf/{seance}', name: 'pdf_seance')]
 public function generate_pdfH($seance)
 {
-
+// dd("aaaa");
 
 $TodayDate= new \DateTime();
 $date= date_format($TodayDate, 'Y-m-d');

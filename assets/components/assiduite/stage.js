@@ -724,9 +724,9 @@ $.ajax({
    
   },
   success: function (html) {
-    $(".loader2").hide();
     if ($.fn.DataTable.isDataTable("#parlot_datatable")) {
         $("#parlot_datatable").DataTable().clear().destroy();
+        $(".loader2").hide();
     }
     $("#parlot_datatable")
       .html(html)
@@ -738,6 +738,7 @@ $.ajax({
         ],
         "font-size": "3rem",
       });
+      $(".loader2").hide();
   },
   error:function(){
     $(".loader2").hide();
@@ -764,30 +765,21 @@ let result;
       val[i] = $(this).val();
     });
     for(let value of val){
-  try {
-    // const request = await axios.post('/administration/epreuve/import', {
-    //   seance: value,
-    //   date: $("#datetime").val(),
-    //   type : 'traite',
-    // });
-
-    result = await $.ajax({
-      type: "POST",
-      url: "/api/traitement_assiduite",
-      data: {
-        seance: value,
-        date: $("#datetime").val(),
-        type : 'traite',
-      },
-//         success: function (html) {
-// alert(html);
-//     // window.open('/assiduite/assiduites/pdf/'+html, '_blank');
-//   },
-
-    });
-} catch (error) {
-    console.error(error);
-}
+      try {
+            result = await $.ajax({
+              type: "POST",
+              url: "/api/traitement_assiduite",
+              data: {
+                seance: value,
+                date: $("#datetime").val(),
+                type : 'traite',
+              },
+            });
+          } 
+          catch (error) {
+            console.error(error);
+          }
+          // window.open('/assiduite/assiduites/pdf/'+value, '_blank');
     }
     $.ajax({
       type: "POST",
@@ -799,9 +791,9 @@ let result;
        
       },
       success: function (html) {
-        $(".loader2").hide();
         if ($.fn.DataTable.isDataTable("#parlot_datatable")) {
             $("#parlot_datatable").DataTable().clear().destroy();
+            $(".loader2").hide();
         }
         $("#parlot_datatable")
           .html(html)
@@ -813,6 +805,7 @@ let result;
             ],
             "font-size": "3rem",
           });
+          $(".loader2").hide();
       },
       error:function(){
         $(".loader2").hide();
@@ -820,7 +813,7 @@ let result;
            icon: 'error',
            title: 'Probleme  !',
             });
-    },
+      },
     });
     for(let value of val){
       window.open('/assiduite/assiduites/pdf/'+value, '_blank');
