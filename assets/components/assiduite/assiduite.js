@@ -761,9 +761,9 @@ $("body #parlot_search").on("click", function () {
  
 });
 //////////////////////////////// parlot_traitement ////////////////////////////////////
-function url_open(value) {
-  window.open('/assiduite/assiduites/pdf/'+value, '_blank');
-}
+// function url_open(value) {
+//   window.open('/assiduite/assiduites/pdf/'+value, '_blank');
+// }
 $("body #parlot_traiter").on("click", async function () {
   $(".loader2").show();
   var hd = $("#hd").val();
