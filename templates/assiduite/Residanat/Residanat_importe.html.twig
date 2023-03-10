@@ -237,102 +237,70 @@ background: lightgreen !important;
 </div>
 {# //////////////////////////////////////////////// #}
 <div class="main-content">
-    <section class="section">
-        <div class="section-header">
-          <h1>Assiduite</h1>
-          <div class="section-header-breadcrumb" style="gap:1rem;">
-            {% for operation in operations %}
-                <button class="{{operation.classTag}}" id="{{operation.idTag}}"><i class="{{operation.icon}}"></i>  {{operation.designation}}</button>
-            {% endfor %}
-          </div>
+  <section class="section">
+    <div class="section-header">
+      <h1>Assiduite</h1>
+      <div class="section-header-breadcrumb" style="gap:1rem;">
+        {% for operation in operations %}
+            <button class="{{operation.classTag}}" id="{{operation.idTag}}"><i class="{{operation.icon}}"></i>  {{operation.designation}}</button>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="section-body">
+      <div class="card">
+        <div class="card-header">
+          <h4>Residanat Importe</h4>
         </div>
-
-        <div class="section-body">
-            <div class="card">
-                <div class="card-header">
-                    <h4>Residanat Importe</h4>
+        <div class="row m-0" style="width: 100%;">
+          <div class="col-md" style="padding-left: 0;">
+            <div class="card shadow-none" style="padding: 10px;height: auto;;">
+              <div class="row justify-content-center">            
+                <div class="col-md-2" >
+                  <label for="etablissement">Date:</label>
+                  <input class="form-control" type="date" id="datetime_pointeuse" value="">
                 </div>
-                <div class="row m-0" style="width: 100%;">
-                    <div class="col-md" style="padding-left: 0;">
-                        <div class="card shadow-none" style="padding: 10px;height: auto;;">
-                    
-                        <div class="row justify-content-center">
-                        
-                            <div class="col-md-2" >
-                                <label for="etablissement">Date:</label>
-                                <input class="form-control" type="date" id="datetime_pointeuse" value="">
-                            </div>
-                            <div style="display: flex;justify-content: center;gap: 6em;">
-                                                     <div class="col-md-1" >
-                            <label for="check"></label>
-                            <span class="" ></i><input type="submit" class="btn btn-primary btn-lg" value="check all" id="p_check"></span>
-                        </div>
-                        <div class="col-md-1" >
-                   
-                            <label for="uncheck"></label>
-                            <span class=""><input type="submit" class="btn btn-primary btn-lg" value="uncheck all" id="p_uncheck"></span>
-
-                        </div>
-                       
-                            </div>
-   
-                      
-                     
-                       
-                    </div>
-                   </br><div class="row justify-content-center m-0">
- 
-  <div class="column" style="background-color:#edf3f5; width: 100%; height: auto;">
-  {# {{dump(residanat)}} #}
-<table id="dtDynamicVerticalScrollresidanat_pointeuse" class="table table-striped table-bordered table-sm" cellspacing="0"  width="100%" height="100%">
-    <thead>
-        <tr>
-            <th>X
-            </th>
-            <th>Salle
-            </th>
-            <th>Sn
-            </th>
-            <th>Ip 
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for resi in residanat %}
-            <tr class="{{resi.sn}}">
-                <td><label class="container"><input name='chk' value="{{resi.sn}}" type="checkbox"><span class="checkmark"></span></label></td>
-                <td>{{resi.designation}}</td>
-                <td>{{resi.sn}}</td>
-                <td>{{resi.IP}}</td>   
-            </tr>
-        {% endfor %} 
-    </tbody>
- 
-</table>
-  </div>
-</div>
-                  
-<div class="loader" hidden></div>
-
-                      
-                    </div>
-                 
-
-                       
-                       
-
-               </div>
-
-                   
- {# /////////////////////////////////////////////////////////////////////////////////////////////////////////////               #}
- 
-
-           </div>
-            
-        </div>
-        </div>
-        </div>
-    </section>
+                <div style="display: flex;justify-content: center;gap: 6em;">
+                  <div class="col-md-1" >
+                    <label for="check"></label>
+                    <span class="" ></i><input type="submit" class="btn btn-primary btn-lg" value="check all" id="p_check"></span>
+                  </div>
+                  <div class="col-md-1" > 
+                    <label for="uncheck"></label>
+                    <span class=""><input type="submit" class="btn btn-primary btn-lg" value="uncheck all" id="p_uncheck"></span>
+                  </div>               
+                </div>   
+              </div>
+              <div class="row justify-content-center m-0">
+                <div class="column" style="background-color:#edf3f5; width: 100%; height: auto;">
+                  <table id="dtDynamicVerticalScrollresidanat_pointeuse" class="table table-striped table-bordered table-sm" cellspacing="0"  width="100%" height="100%">
+                    <thead>
+                      <tr>
+                          <th>X</th>
+                          <th>Salle</th>
+                          <th>Sn</th>
+                          <th>Ip</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for resi in residanat %}
+                        <tr class="{{resi.sn}}">
+                          <td><label class="container"><input name='chk' value="{{resi.sn}}" type="checkbox"><span class="checkmark"></span></label></td>
+                          <td>{{resi.designation}}</td>
+                          <td>{{resi.sn}}</td>
+                          <td>{{resi.IP}}</td>   
+                        </tr>
+                      {% endfor %} 
+                    </tbody>
+                  </table>
+                </div>
+              </div>                
+              <div class="loader" hidden></div>
+            </div>
+          </div>
+        </div>        
+      </div>
+    </div>
+  </section>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
