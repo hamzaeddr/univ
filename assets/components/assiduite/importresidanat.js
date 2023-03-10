@@ -103,26 +103,35 @@ $(document).ready(function(){
         });
         // alert(val);
         if (val.length === 0) {
-            list_pointeuse.forEach((obj) => {
-                $.ajax({
+            list_pointeuse.forEach((obj) => 
+            {
+                try {
+                     $.ajax({
                     type: "POST",
                     url: "/api/pointeuse_connect/" + obj.ip +"/ip",
-                    success: function (html) {
-                        $(".loader2").hide();
+                            success: function (html) {
                                 if(html == 'true'){
                                 Toast.fire({
                                         icon: 'success',
                                         title: 'Pointeuse connected',
+                                        
                                     })
+                                    $(".loader2").hide();
                                 }
                                 else{
                                     Toast.fire({
                                         icon: 'error',
                                         title: 'pointeuse not connected',
                                     })
+                                    $(".loader2").hide();
                                 }
                             }
-                });
+                            
+                    });
+                } 
+                catch (error) {
+                    console.error(error);
+                  }
             });
         }
         else{

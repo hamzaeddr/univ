@@ -1797,9 +1797,7 @@ if ($zk->connect() == 'true') {
                 $zk->enableDevice();
                 $zk->disconnect();
                 if (empty($attendance)) {
-                
-                   
-            
+                    
                 }
                 else{
                     // $attendance = array_reverse($attendance, true);
