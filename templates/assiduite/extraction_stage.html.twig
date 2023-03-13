@@ -264,7 +264,7 @@ tr.highlightyerror{
                         <div class="col-md-2" >
                             <label for="etablissement">Choix Promotion:</label>
                             <select  name="salle_pointeuse"  id="P_situation" >
-                                 <option value="0"> Select Promotion</option>
+                                 <option value=""> Select Promotion</option>
                                  {% for Pro in promotions %}
                                     <option value="{{Pro.id}}">{{Pro.designation}}</option>
                                 {% endfor %} 

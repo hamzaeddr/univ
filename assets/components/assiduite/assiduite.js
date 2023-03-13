@@ -11,8 +11,16 @@ const Toast = Swal.mixin({
 });
 $(document).ready(function () {
   /////////////////function loader hide////////////
-  $(".loader2").hide();
 
+  $("#traite_epreuve").hide();
+  $("#retraiter_seance").hide();
+  $("#deverouiller-modal").hide();
+  $("#verouiller-modal").hide();
+  $("#assiduite_print").hide();
+  $("#retraiter_seance").hide();
+  $("#verouiller-modal").hide();
+  $("#assiduite_print").hide();
+  $(".loader2").hide();
 function loader_hide() {
   $(".loader2").hide();
 }
@@ -134,6 +142,14 @@ function loader_hide() {
     $("#etablissement").on("change", function () {
       $(".loader2").show();
       var etablissement = $(this).val();
+      if (!etablissement) {
+        Toast.fire({
+          icon: 'error',
+          title: 'Veuillez choisir une etablissement !',
+          });
+            $(".loader2").hide();
+        return;
+      }
       $.ajax({
         type: "POST",
         url: "/api/Formation_aff/" + etablissement,
@@ -166,6 +182,14 @@ function loader_hide() {
   $("#formation").on("change", function () {
     $(".loader2").show();
     var formation = $(this).val();
+    if (!formation) {
+      Toast.fire({
+        icon: 'error',
+        title: 'Veuillez choisir une formation !',
+        });
+          $(".loader2").hide();
+      return;
+    }
     $.ajax({
       type: "POST",
       url: "/api/Promotion_aff/" + formation,
@@ -188,13 +212,33 @@ function loader_hide() {
 
   $("#promotion").on("change", function () {
     var promotion = $(this).val();
-    seanceaffichage(promotion, $("#datetime").val(),'CR');
+    if (!promotion) {
+      Toast.fire({
+        icon: 'error',
+        title: 'Veuillez choisir la promotion !',
+        });
+          $(".loader2").hide();
+      return;
+    }
+    else{
+      seanceaffichage(promotion, $("#datetime").val(),'CR');
+    }
   });
 ////////////////////////////////////////////////Date//////////
 
   $("#datetime").on("change", function () {
     var date = $(this).val();
-    seanceaffichage($("#promotion").val(), date,'CR');
+    if (!date) {
+      Toast.fire({
+        icon: 'error',
+        title: 'Veuillez remplir la date  !',
+        });
+          $(".loader2").hide();
+      return;
+    }
+    else{
+      seanceaffichage($("#promotion").val(), date,'CR');
+    }
   });
 
   ///////////////////////////////////////////// date //////////////////////////
@@ -392,8 +436,8 @@ function loader_hide() {
         title: 'seance deja traité',
 
       })
-      // $(".loader2").hide();
     };
+    $(".loader2").hide();
     
   });
       
@@ -625,6 +669,14 @@ function loader_hide() {
   $("body #modisalle").on("click", function () {
     $(".loader2").show();
     var salle = $("#salle").val();
+    if (!salle) {
+      Toast.fire({
+        icon: 'error',
+        title: 'Veuillez choisir la salle !',
+        });
+          $(".loader2").hide();
+      return;
+    }
     list.forEach((obj) => {
       $.ajax({
         type: "POST",
@@ -634,7 +686,6 @@ function loader_hide() {
          
         },
         success: function (html) {
-          // $(".loader2").hide();
           seanceaffichage($("#promotion").val(), $("#datetime").val(),'CR');
           $(".loader2").hide();
         },
@@ -723,7 +774,23 @@ deSelect();  // $("#parlot_modal").show();
 $("body #parlot_search").on("click", function () {
   $(".loader2").show();
   var hd = $("#hd").val();
+  if (!hd) {
+    Toast.fire({
+      icon: 'error',
+      title: 'Veuillez remplir la date Debut !',
+      });
+        $(".loader2").hide();
+    return;
+  }
   var hf = $("#hf").val();
+  if (!hf) {
+    Toast.fire({
+      icon: 'error',
+      title: 'Veuillez remplir la date Fin !',
+      });
+        $(".loader2").hide();
+    return;
+  }
   var date = $("#datetime").val();
   $.ajax({
     type: "POST",
@@ -767,7 +834,23 @@ $("body #parlot_search").on("click", function () {
 $("body #parlot_traiter").on("click", async function () {
   $(".loader2").show();
   var hd = $("#hd").val();
+    if (!hd) {
+      Toast.fire({
+        icon: 'error',
+        title: 'Veuillez remplir la date Debut !',
+        });
+          $(".loader2").hide();
+      return;
+    }
   var hf = $("#hf").val();
+    if (!hf) {
+      Toast.fire({
+        icon: 'error',
+        title: 'Veuillez remplir la date Fin !',
+        });
+          $(".loader2").hide();
+      return;
+    }
   var date = $("#datetime").val();
   let result;
       var val = [];
@@ -991,23 +1074,34 @@ $("body #parlot_traiter").on("click", async function () {
             
  //////////////////extraction stage////////////////:
  $('#create_extraction_stage').click(function(){ 
-  $(".loader2").show();
-  var to = $('#datetimeFsituation').val();
-  var from = $('#datetimeDsituation').val();
-  var service = $('#E_situation').val();
-  var formation = $('#F_situation').val();
-  var promotion = $('#P_situation').val();
-
-
-  var tou =  $('input[name="tous"]:checked').val();
-  $(".loader2").hide();
-          // window.location.href = "{{ path('extraction') }}?To="+to+"&From="+from;
-         url = "/api/generate_extraction?To="+to+"&From="+from+"&formation="+formation+"&promotion="+promotion+"&Service="+service+"&Tou="+tou+"&type=stage";
-         service;
-         window.open(url);
-           
-
-            });        
+    $(".loader2").show();
+    var to = $('#datetimeFsituation').val();
+      if (!to) {
+        Toast.fire({
+          icon: 'error',
+          title: 'Veuillez remplir la date debut !',
+          });
+            $(".loader2").hide();
+        return;
+      }
+    var from = $('#datetimeDsituation').val();
+      if (!from) {
+        Toast.fire({
+          icon: 'error',
+          title: 'Veuillez remplir la date Fin !',
+          });
+            $(".loader2").hide();
+        return;
+      }
+    var service = $('#E_situation').val();
+    var formation = $('#F_situation').val();
+    var promotion = $('#P_situation').val();
+    var tou =  $('input[name="tous"]:checked').val();
+      $(".loader2").hide();
+        url = "/api/generate_extraction?To="+to+"&From="+from+"&formation="+formation+"&promotion="+promotion+"&Service="+service+"&Tou="+tou+"&type=stage";
+        // service;
+        window.open(url);
+      });        
   //////////////////////////etudiant details ////////////////////////////////////////////
 
   $("body #dtDynamicVerticalScrollExample2").on("dblclick", "tr", function () {

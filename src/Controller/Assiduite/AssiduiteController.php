@@ -870,7 +870,7 @@ public function Residanatimp(Request $request): Response
             // dd($sqlr);
        
         $resid = ApiController::execute($sqlr,$this->em);
-        // dd($resid);
+        dd($resid);
 
         foreach($resid as $etudian){
 

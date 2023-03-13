@@ -90,24 +90,28 @@ const Toast = Swal.mixin({
   });
    //////////////////extraction stage////////////////:
  $('#create_extraction_stage').click(function(){ 
-  
     var to = $('#datetimeFsituation').val();
     var from = $('#datetimeDsituation').val();
     var service = $('#E_situation').val();
     var formation = $('#F_situation').val();
     var promotion = $('#P_situation').val();
-  
-  
     var tou =  $('input[name="tous"]:checked').val();
-    
+    if (!to || !from || !service || !formation || !promotion || !tou) {
+      Toast.fire({
+        icon: 'error',
+        title: 'Veuillez remplire les champs !',
+        });
+          $(".loader2").hide();
+      return;
+    }
             // window.location.href = "{{ path('extraction') }}?To="+to+"&From="+from;
-           url = "/api/generate_extraction?To="+to+"&From="+from+"&formation="+formation+"&promotion="+promotion+"&Service="+service+"&Tou="+tou+"&type=stage";
-           service;
-           window.open(url);
+      url = "/api/generate_extraction?To="+to+"&From="+from+"&formation="+formation+"&promotion="+promotion+"&Service="+service+"&Tou="+tou+"&type=stage";
+      // service;
+      window.open(url);
              
   
-              });  
-              $('#E_situation').select2();
+  });  
+$('#E_situation').select2();
 $('#F_situation').select2();
 $('#P_situation').select2();
 $('#Et_situation').select2();
