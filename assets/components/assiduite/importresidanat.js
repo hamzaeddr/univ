@@ -110,13 +110,14 @@ $(document).ready(function(){
                     type: "POST",
                     url: "/api/pointeuse_connect/" + obj.ip +"/ip",
                             success: function (html) {
+                                $(".loader2").show();
                                 if(html == 'true'){
                                 Toast.fire({
                                         icon: 'success',
                                         title: 'Pointeuse connected',
                                         
                                     })
-                                    $(".loader2").hide();
+                                $(".loader2").hide();
                                 }
                                 else{
                                     Toast.fire({

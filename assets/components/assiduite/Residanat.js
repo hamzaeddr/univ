@@ -38,14 +38,24 @@ $("body #create_extractionRESIDANT").on("click", function () {
 var hd = $("#datetimeDsituation").val();
 var hf = $("#datetimeFsituation").val();
 var choixresidant = $('#P_residanat_etudiant option:selected').val();
+if (!hd || !hf ) {
+  Toast.fire({
+    icon: 'error',
+    title: 'Veuillez remplire les champs !',
+    });
+      $(".loader2").hide();
+  return;
+}
 
 if($('input[name="details"]:checked'))
     {
+      alert("aaaa");
       $(".loader2").hide();
       window.open('excelyr/'+choixresidant+"/"+hd+"/"+hf, '_blank');
     }
 else
     {
+      alert("aaa");
       $(".loader2").hide();
       window.open('excely/'+choixresidant+"/"+hd+"/"+hf, '_blank');
     }

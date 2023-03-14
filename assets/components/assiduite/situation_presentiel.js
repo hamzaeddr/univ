@@ -87,13 +87,34 @@ $("body #situation_presentiel").on("click", function () {
   $(".loader2").show();
   // list.forEach((obj) => {
     var etudiant = $("#Et_situation").val();
-    // soufiane...................................
+    // if (!etudiant ) {
+    //   Toast.fire({
+    //     icon: 'error',
+    //     title: 'Veuillez choisir un étudiant !',
+    //     });
+    //   }
     var semestre =  $('input[name="date"]:checked').val();
-    // var date_debut = $("#datetimeDsituation").val();
-    // var date_fin = $("#datetimeFsituation").val();
-
-  window.open('/assiduite/assiduites/pdf_presentiel/'+etudiant+'/'+semestre, '_blank');
-  $(".loader2").hide();
+    if (!etudiant) {
+      Toast.fire({
+        icon: 'error',
+        title: 'Veuillez choisir un étudiant !',
+        });
+        $(".loader2").hide();
+        return;
+        }
+      else if(!semestre){
+        Toast.fire({
+          icon: 'error',
+          title: 'Veuillez choisir une semestre !',
+          });
+          $(".loader2").hide();
+          return;
+      }    
+        else{
+          window.open('/assiduite/assiduites/pdf_presentiel/'+etudiant+'/'+semestre, '_blank');
+          $(".loader2").hide();
+          return;
+        }
 
 
 });    
@@ -128,6 +149,30 @@ $("body #situation_search").on("click", function () {
   etudiant = $("#Et_situation").val();
   dated = $("#datetimeDsituation").val();
   datef = $("#datetimeFsituation").val();
+  if (!etudiant || !dated || !datef) {
+    Toast.fire({
+      icon: 'error',
+      title: 'Veuillez remplire les champs !',
+      });
+        $(".loader2").hide();
+    return;
+  }
+  // else if (!dated) {
+  //   Toast.fire({
+  //     icon: 'error',
+  //     title: 'Veuillez Verifier la date !',
+  //     });
+  //       $(".loader2").hide();
+  //   return;
+  // }
+  // else if(!datef){
+  //   Toast.fire({
+  //     icon: 'error',
+  //     title: 'Veuillez Verifier la date !',
+  //     });
+  //       $(".loader2").hide();
+  //   return;
+  // }
   $.ajax({
     type: "POST",
     url: "/api/aff_situation",
