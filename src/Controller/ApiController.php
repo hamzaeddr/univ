@@ -641,7 +641,7 @@ return $requete;
  {
     // $date= date_format(date(), 'Y-m-d');
 
-    $requete = "SELECT * FROM `v_seance` WHERE `code_seance`=$idseance";
+    $requete = "SELECT * FROM `v_seance2` WHERE `code_seance`=$idseance";
     $seance_info = self::execute($requete,$em);
         foreach ($seance_info as $data)
         { 
@@ -757,35 +757,35 @@ return $requete;
  public function Seance_aff($promotion,$date,$type): Response
  {      
    if ($type == "stage") {
-     $concatenation = " AND v_seance.nature_des = 'ST'";
+     $concatenation = " AND v_seance2.nature_des = 'ST'";
    }
    else{
     $concatenation = "";
 
    }
-     $requete = "SELECT  v_seance.module as idmodule,
-                            v_seance.code_seance,
-                            v_seance.nature_des as seance_natur,
-                            v_seance.groupe,
-                            v_seance.salle_des as salle,
-                            v_seance.element_des as element,
-                            v_seance.ens_nom ,
-                            v_seance.ens_prenom,
-                            TIME_FORMAT(v_seance.heure_debut, '%H:%i') AS heur_db ,
-                            TIME_FORMAT(v_seance.heure_fin, '%H:%i') AS heur_fin,
+     $requete = "SELECT  v_seance2.module as idmodule,
+                            v_seance2.code_seance,
+                            v_seance2.nature_des as seance_natur,
+                            v_seance2.groupe,
+                            v_seance2.salle_des as salle,
+                            v_seance2.element_des as element,
+                            v_seance2.ens_nom ,
+                            v_seance2.ens_prenom,
+                            TIME_FORMAT(v_seance2.heure_debut, '%H:%i') AS heur_db ,
+                            TIME_FORMAT(v_seance2.heure_fin, '%H:%i') AS heur_fin,
                             xseance.ID_Séance as exis, xseance.Statut,
                             CASE WHEN xseance.ID_Séance is NULL THEN '0'
                             ELSE 1
                             END as Existe,
                             xseance.Signé,
-                            xseance.Annulée,v_seance.promotion,
-                            v_seance.id_module,
-                            v_seance.code_salle
-                    FROM v_seance
-                    LEFT JOIN xseance ON xseance.id_séance=v_seance.code_seance
-                    INNER JOIN ac_formation ON ac_formation.id=v_seance.formation
-                    INNER JOIN ac_etablissement ON ac_etablissement.id=v_seance.etablissement
-                    WHERE ac_etablissement.abreviation in ('FMA' ,'FMDA' , 'ISITS' , 'FASIMH' , 'FPA' , 'LAZ','EIG','EIA','MGS','CPGEA') AND ac_formation.abreviation IN ('IGPIP','MG','MD','IST','IP','IAR','IM','CAM','CAM - SIBOP','CAM - SIH','CPGEA','PH','PH_HOSPIT','PH_INDUST','IGPIP','GISIPA','MPSI','MP') and  v_seance.promotion=$promotion  AND v_seance.date_seance like '$date%' $concatenation ORDER BY v_seance.heure_debut";
+                            xseance.Annulée,v_seance2.promotion,
+                            v_seance2.id_module,
+                            v_seance2.code_salle
+                    FROM v_seance2
+                    LEFT JOIN xseance ON xseance.id_séance=v_seance2.code_seance
+                    INNER JOIN ac_formation ON ac_formation.id=v_seance2.formation
+                    INNER JOIN ac_etablissement ON ac_etablissement.id=v_seance2.etablissement
+                    WHERE ac_etablissement.abreviation in ('FMA' ,'FMDA' , 'ISITS' , 'FASIMH' , 'FPA' , 'LAZ','EIG','EIA','MGS','CPGEA') AND ac_formation.abreviation IN ('IGPIP','MG','MD','IST','IP','IAR','IM','CAM','CAM - SIBOP','CAM - SIH','CPGEA','PH','PH_HOSPIT','PH_INDUST','IGPIP','GISIPA','MPSI','MP') and  v_seance2.promotion=$promotion  AND v_seance2.date_seance like '$date%' $concatenation ORDER BY v_seance2.heure_debut";
     $stmt = $this->em->getConnection()->prepare($requete);
     $newstmt = $stmt->executeQuery();   
     $seances = $newstmt->fetchAll();
@@ -939,7 +939,7 @@ return $requete;
         $date = $request->request->get('date');  
         // $hd = $request->request->get('hd');
         $type = $request->request->get('type');
-        $requete_seance = "SELECT promotion,module,groupe,heure_debut,heure_fin,code_salle FROM `v_seance` WHERE code_seance=$seance";
+        $requete_seance = "SELECT promotion,module,groupe,heure_debut,heure_fin,code_salle FROM `v_seance2` WHERE code_seance=$seance";
         $seance_des =  self::execute($requete_seance,$this->em);
         $promotion = $seance_des[0]['promotion'];
         $module = $seance_des[0]['module'];
@@ -1201,7 +1201,7 @@ public function parlot(Request $request)
         // dd($type);
 
         if ($type == "stage") {
-            $concatenation = " AND v_seance.nature_des = 'ST'";
+            $concatenation = " AND v_seance2.nature_des = 'ST'";
           }
           else{
            $concatenation = "";
@@ -1210,19 +1210,19 @@ public function parlot(Request $request)
         // $TodayDate= new \DateTime(); 
         // $date= date_format($TodayDate, 'Y-m-d');
         // $date = '2022-10-03';
-        $requete="SELECT v_seance.code_seance as cod,TIME_FORMAT(v_seance.heure_debut, '%H:%i') AS heur_db , TIME_FORMAT(v_seance.heure_fin, '%H:%i') AS heur_fin,ac_etablissement.abreviation as eta ,ac_formation.abreviation as form ,ac_promotion.designation as pro ,v_seance.groupe, psalles.abreviation AS salle, ac_module.designation as module1, ac_element.designation as element, penseignant.nom, penseignant.prenom,xseance.ID_Séance as exis
-        FROM v_seance
-        LEFT JOIN xseance ON xseance.ID_Séance=v_seance.code_seance
-        INNER JOIN ac_promotion ON ac_promotion.id=v_seance.promotion
-        INNER JOIN ac_formation ON ac_formation.id=v_seance.formation
-        INNER JOIN ac_etablissement ON ac_etablissement.id=v_seance.etablissement
-        LEFT JOIN ac_module ON ac_module.code=v_seance.module
-        LEFT JOIN ac_element ON ac_element.code=v_seance.element
-        left JOIN psalles ON psalles.code=v_seance.code_salle
-        LEFT JOIN penseignant ON penseignant.code=v_seance.enseignant
+        $requete="SELECT v_seance2.code_seance as cod,TIME_FORMAT(v_seance2.heure_debut, '%H:%i') AS heur_db , TIME_FORMAT(v_seance2.heure_fin, '%H:%i') AS heur_fin,ac_etablissement.abreviation as eta ,ac_formation.abreviation as form ,ac_promotion.designation as pro ,v_seance2.groupe, psalles.abreviation AS salle, ac_module.designation as module1, ac_element.designation as element, penseignant.nom, penseignant.prenom,xseance.ID_Séance as exis
+        FROM v_seance2
+        LEFT JOIN xseance ON xseance.ID_Séance=v_seance2.code_seance
+        INNER JOIN ac_promotion ON ac_promotion.id=v_seance2.promotion
+        INNER JOIN ac_formation ON ac_formation.id=v_seance2.formation
+        INNER JOIN ac_etablissement ON ac_etablissement.id=v_seance2.etablissement
+        LEFT JOIN ac_module ON ac_module.code=v_seance2.module
+        LEFT JOIN ac_element ON ac_element.code=v_seance2.element
+        left JOIN psalles ON psalles.code=v_seance2.code_salle
+        LEFT JOIN penseignant ON penseignant.code=v_seance2.enseignant
         WHERE ac_etablissement.abreviation in ('FMA' ,'FMDA' , 'ISITS' , 'FASIMH' , 'FPA' , 'LAZ','EIG','EIA','MGS','CPGEA') 
         AND ac_formation.abreviation IN ('IGPIP','MG','MD','IST','IP','IAR','IM','CAM','CAM - SIBOP','CAM - SIH','CPGEA','PH','PH_HOSPIT','PH_INDUST','IGPIP','GISIPA','MPSI','MP') 
-        and v_seance.date_seance like '$date%' AND v_seance.heure_debut>='$hd' AND v_seance.heure_fin<='$hf' $concatenation ORDER BY v_seance.heure_debut";
+        and v_seance2.date_seance like '$date%' AND v_seance2.heure_debut>='$hd' AND v_seance2.heure_fin<='$hf' $concatenation ORDER BY v_seance2.heure_debut";
         $seances =  self::execute($requete,$this->em);
         $html = $this->render('assiduite/table/datatable_parlot.html.twig', [
             'seances' => $seances,
@@ -1254,24 +1254,24 @@ public function pointeuse_aff(Request $request, $idsalle)
 
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#[Route('/ResidanatImporte', name: 'pointeuse_residanat')]
-public function pointeuse_residanat(Request $request)
-{  
-    // $TodayDate= new \DateTime(); 
-    //     $requete="SELECT DISTINCT iseance_salle.code_salle,psalles.designation,machines.sn,machines.IP 
-    //     FROM `psalles` 
-    //     INNER JOIN iseance_salle ON iseance_salle.code_salle=psalles.code
-    //     INNER JOIN machines ON iseance_salle.id_pointeuse=machines.sn where psalles.code='SAL00017'";
+// #[Route('/ResidanatImporte', name: 'pointeuse_residanat')]
+// public function pointeuse_residanat(Request $request)
+// {  
+//     // $TodayDate= new \DateTime(); 
+//     //     $requete="SELECT DISTINCT iseance_salle.code_salle,psalles.designation,machines.sn,machines.IP 
+//     //     FROM `psalles` 
+//     //     INNER JOIN iseance_salle ON iseance_salle.code_salle=psalles.code
+//     //     INNER JOIN machines ON iseance_salle.id_pointeuse=machines.sn where psalles.code='SAL00017'";
 
-    //     $residanat =  self::execute($requete,$this->em);
+//     //     $residanat =  self::execute($requete,$this->em);
     
 
-    //     $response = $this->forward('App\Controller\ResidanatImp::show', [
-    //         'residanat' => $residanat,
-    //     ]);
-    //            return new JsonResponse($response);
+//     //     $response = $this->forward('App\Controller\ResidanatImp::show', [
+//     //         'residanat' => $residanat,
+//     //     ]);
+//     //            return new JsonResponse($response);
 
-}
+// }
 
 #[Route('/pointeuse_connect/{idsalle}/{type}', name: 'pointeuse_connect')]
 public function pointeuse_connect(Request $request, $idsalle,$type)
@@ -1515,7 +1515,7 @@ $zk->disconnect();
         $TodayDate = date("Y-m-d");
        
         if ($type == 'stage') {
-            $requete2 = "and v_seance.nature_des='ST'";
+            $requete2 = "and v_seance2.nature_des='ST'";
         }
         else{
             $requete2 = '';
@@ -1523,10 +1523,10 @@ $zk->disconnect();
       
              
         if ($tou =='tous') {
-         $requete = "and v_seance.etablissement='$service'";
+         $requete = "and v_seance2.etablissement='$service'";
         }
        elseif ($tou =='promo') {
-         $requete = "and  v_seance.promotion='$promotion'";
+         $requete = "and  v_seance2.promotion='$promotion'";
        }
         
         else{
@@ -1538,14 +1538,14 @@ $zk->disconnect();
        $spreadsheet = new Spreadsheet();
 
      $sql="SELECT xseance_absences.ID_Admission,xseance_absences.Nom,xseance_absences.Prénom,xseance.ID_Séance,xseance.ID_Module as module,pnature_epreuve.abreviation as typ,xseance.Date_Séance,xseance_absences.Heure_Pointage,xseance_absences.Categorie,xseance_absences.Categorie_Enseig,xseance.Heure_Debut as hd,xseance.Heure_Fin as hf ,
-     v_seance.etablissement_des as etablissement,v_seance.formation_des as formation,v_seance.promotion_des AS 
-          promotion,v_seance.element_des as element,v_seance.module
+     v_seance2.etablissement_des as etablissement,v_seance2.formation_des as formation,v_seance2.promotion_des AS 
+          promotion,v_seance2.element_des as element,v_seance2.module
      
           FROM `xseance_absences`
           INNER JOIN xseance ON xseance.ID_Séance=xseance_absences.ID_Séance    
-          INNER JOIN v_seance ON xseance.ID_Séance=v_seance.code_seance
+          INNER JOIN v_seance2 ON xseance.ID_Séance=v_seance2.code_seance
          
-          inner JOIN pnature_epreuve ON v_seance.type_seance=pnature_epreuve.code
+          inner JOIN pnature_epreuve ON v_seance2.type_seance=pnature_epreuve.code
           
      WHERE xseance.Date_Séance>='$from' and xseance.Date_Séance<='$to' AND pnature_epreuve.Absence=1 
      AND (xseance.Annulée=0 or xseance.Annulée is NULL ) $requete $requete2";  

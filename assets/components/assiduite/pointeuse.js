@@ -35,8 +35,6 @@ $.ajax({
   type: "POST",
   url: "/api/pointeuse_aff/" + var1,
   success: function (html) {
-$(".loader2").hide();
-
     if ($.fn.DataTable.isDataTable("#dtDynamicVerticalScrollExample_pointeuse")) {
       $("#dtDynamicVerticalScrollExample_pointeuse").DataTable().clear().destroy();
     }
@@ -98,6 +96,7 @@ $("#salle_pointeuse").on("change", function () {
   });
 
   $("body #connect_pointeuse").on("click", function () {
+    $(".loader2").show();
     var val = [];
     $(':checkbox:checked').each(function(i){
       val[i] = $(this).val();
@@ -109,7 +108,7 @@ $("#salle_pointeuse").on("change", function () {
           type: "POST",
           url: "/api/pointeuse_connect/" + obj.ip +"/ip",
           success: function (html) {
-            
+            $(".loader2").hide();
             if(html == 'true'){
               Toast.fire({
                 icon: 'success',
@@ -127,6 +126,13 @@ $("#salle_pointeuse").on("change", function () {
         
             }
         
+          },
+          error:function(){
+            $(".loader2").hide();
+              Toast.fire({
+                icon: 'error',
+                title: 'Probleme  !',
+              });
           }
             });
          });
@@ -138,7 +144,7 @@ $("#salle_pointeuse").on("change", function () {
         url: "/api/pointeuse_connect/" + value +"/sn",
         
         success: function (html) {
-          
+          $(".loader2").hide();
           if(html == 'true'){
             $('.'+value).removeClass("desconnected").removeClass("connected").addClass("connected");
 
@@ -149,7 +155,7 @@ $("#salle_pointeuse").on("change", function () {
       
           }
           else{
-      $('.'+value).removeClass("desconnected").removeClass("connected").addClass("desconnected");
+              $('.'+value).removeClass("desconnected").removeClass("connected").addClass("desconnected");
 
             Toast.fire({
               icon: 'error',
@@ -162,8 +168,12 @@ $("#salle_pointeuse").on("change", function () {
       
         },
         error:function(){
-          
-        },
+          $(".loader2").hide();
+            Toast.fire({
+              icon: 'error',
+              title: 'Probleme  !',
+            });
+        }
         // timeout: 15000
           });
     }
@@ -174,12 +184,14 @@ $("#salle_pointeuse").on("change", function () {
 ///////////////att_pointeuse//////////
 
 $("#att_pointeuse").on("click", function () {
+  $(".loader2").show();
   var date = $("#datetime_pointeuse").val();
   list_pointeuse.forEach((obj) => {
     $.ajax({
       type: "POST",
       url: "/api/pointeuse_att/" + obj.ip + "/" + date ,
       success: function (html) {
+        $(".loader2").hide();
         if ($.fn.DataTable.isDataTable("#dtDynamicVerticalScrollExample_pointeuse2")) {
           $("#dtDynamicVerticalScrollExample_pointeuse2").DataTable().clear().destroy();
         }
@@ -209,12 +221,13 @@ $("#att_pointeuse").on("click", function () {
 ///////////////user_pointeuse//////////
 
 $("#user_pointeuse").on("click", function () {
+  $(".loader2").show();
   list_pointeuse.forEach((obj) => {
     $.ajax({
       type: "POST",
       url: "/api/pointeuse_user/" + obj.ip,
       success: function (html) {
-        
+        $(".loader2").hide();
         if ($.fn.DataTable.isDataTable("#dtDynamicVerticalScrollExample_pointeuse2")) {
           $("#dtDynamicVerticalScrollExample_pointeuse2").DataTable().clear().destroy();
         }
@@ -231,7 +244,14 @@ $("#user_pointeuse").on("click", function () {
           
        
 
-      },
+      },error:function(){
+        $(".loader2").hide();
+          Toast.fire({
+            icon: 'error',
+            title: 'Probleme  !',
+          });
+      }
+
     });
   });
 
@@ -239,6 +259,7 @@ $("#user_pointeuse").on("click", function () {
 ///////////////download_pointeuse//////////
 
 $("#download_pointeuse").on("click", function () {
+  $(".loader2").show();
   var date = $("#datetime_pointeuse").val();
   list_pointeuse.forEach((obj) => {
     $.ajax({
@@ -264,5 +285,41 @@ $("#download_pointeuse").on("click", function () {
 
 
 
+});
+// alert("aaa");
+$("#residanat_Importe").on("click", function(){
+  $(".loader2").show();
+  // alert('ok')
+  var date = $("#datetime_pointeuse").val();
+  if (!date) {
+    Toast.fire({
+      icon: 'error',
+      title: 'Veuillez remplir la date  !',
+      });
+        // alert("Veuillez remplir la date");
+        $(".loader2").hide();
+    return;
+  }
+  list_pointeuse.forEach((obj) => {
+  $.ajax({
+      type: "POST",
+      url: "/api/pointeuse_download/" + obj.ip + "/" + date,
+      success: function (html) {
+      $(".loader2").hide();
+      Toast.fire({
+          icon: 'success',
+          title: 'la pointeuse bien importée.',
+      })
+      },
+      error:function(){
+        $(".loader2").hide();
+        Toast.fire({
+            icon: 'error',
+            title: 'Probleme technique  !',
+            });
+      }
+      
+  });
+  });  
 });
 });

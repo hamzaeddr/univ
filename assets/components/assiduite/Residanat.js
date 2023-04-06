@@ -11,11 +11,13 @@ const Toast = Swal.mixin({
 });
 $(document).ready(function () {
 $("#E_residanat").on("change", function () {
+  $(".loader2").show();
 var Residanat = $('#E_residanat option:selected').val();;
 $.ajax({
   type: "POST",
   url: "/api/residanat-etud/" + Residanat,
   success: function (html) {
+    $(".loader2").hide();
     $("#P_residanat_etudiant").html(html).select2();
   //   console.log(html);
   //   $("#P_residanat_etudiant").prop("selectedIndex", 1);
@@ -32,16 +34,21 @@ $.ajax({
 });
 $('select').select2();
 $("body #create_extractionRESIDANT").on("click", function () {
+  $(".loader2").show();
 var hd = $("#datetimeDsituation").val();
 var hf = $("#datetimeFsituation").val();
 var choixresidant = $('#P_residanat_etudiant option:selected').val();
 
 if($('input[name="details"]:checked'))
-{
-  window.open('assiduite/assiduites/excelyr/'+choixresidant+"/"+hd+"/"+hf, '_blank');
-}else{
-  window.open('assiduite/assiduites/excely/'+choixresidant+"/"+hd+"/"+hf, '_blank');
-}
+    {
+      $(".loader2").hide();
+      window.open('excelyr/'+choixresidant+"/"+hd+"/"+hf, '_blank');
+    }
+else
+    {
+      $(".loader2").hide();
+      window.open('excely/'+choixresidant+"/"+hd+"/"+hf, '_blank');
+    }
 
 
 

@@ -63,6 +63,7 @@ class AssiduiteController extends AbstractController
         if(!$operations) {
             return $this->render("errors/403.html.twig");
         }
+        // dd($operations);
         $etbalissements =  $this->em->getRepository(AcEtablissement::class)->findBy(['active'=>1,'assiduite'=>1]);
         $formations = $this->em->getRepository(AcFormation::class)->findBy(['etablissement'=>1,'assiduite'=>1]);
         $promotions = $this->em->getRepository(AcPromotion::class)->findBy(['formation'=>1, 'active' => 1],['id'=>'ASC']);
@@ -386,11 +387,11 @@ switch ($semestre) {
 
     $mysql="SELECT xseance.ID_Séance,semaine.nsemaine as Semaine,semaine.date_debut as DateD,semaine.date_fin as DateF,pnature_epreuve.abreviation, 
     TIME_FORMAT(xseance.Heure_Debut, '%H:%i') as hd,TIME_FORMAT(xseance.Heure_Fin, '%H:%i') as hf,xseance.Date_Séance,time_to_sec(timediff(xseance.Heure_Fin,  
-    xseance.Heure_Debut )) / 3600 as volume,xseance_absences.Categorie,xseance_absences.Categorie_Enseig ,v_seance.module_des as module,v_seance.element_des as element
+    xseance.Heure_Debut )) / 3600 as volume,xseance_absences.Categorie,xseance_absences.Categorie_Enseig ,v_seance2.module_des as module,v_seance2.element_des as element
     FROM xseance LEFT JOIN semaine ON xseance.semaine= semaine.id
     LEFT JOIN xseance_absences ON xseance.ID_Séance=xseance_absences.ID_Séance 
     LEFT JOIN pnature_epreuve ON pnature_epreuve.code=xseance.TypeSéance 
-    INNER JOIN v_seance       ON v_seance.code_seance=xseance.id_séance
+    INNER JOIN v_seance2       ON v_seance2.code_seance=xseance.id_séance
       WHERE xseance_absences.ID_Admission='$idadm' AND semaine.annee_s='2022/2023' 
       AND xseance.Date_Séance>='$dated' AND xseance.Date_Séance<='$date' AND (xseance.annulée is Null or xseance.annulée=0) ORDER BY xseance.Date_Séance";
 
@@ -502,11 +503,11 @@ setlocale(LC_TIME, "fr_FR", "French");
 $date2 = strftime("%A %d %B %G", strtotime($date)); 
    //seance+date+prof
  
-   $m= "SELECT v_seance.promotion_des as promotion,v_seance.formation_des as formation,v_seance.etablissement_des as etablisement,
-   xseance.ID_Séance,v_seance.nature_des,xseance.Groupe,v_seance.salle_des AS salle, v_seance.module as module, 
-   v_seance.element_des as element, v_seance.ens_nom as nom, v_seance.ens_prenom as prenom,TIME_FORMAT(xseance.Heure_Debut, '%H:%i') as Heure_Debut,
+   $m= "SELECT v_seance2.promotion_des as promotion,v_seance2.formation_des as formation,v_seance2.etablissement_des as etablisement,
+   xseance.ID_Séance,v_seance2.nature_des,xseance.Groupe,v_seance2.salle_des AS salle, v_seance2.module as module, 
+   v_seance2.element_des as element, v_seance2.ens_nom as nom, v_seance2.ens_prenom as prenom,TIME_FORMAT(xseance.Heure_Debut, '%H:%i') as Heure_Debut,
    TIME_FORMAT(xseance.Heure_Fin, '%H:%i') as Heure_Fin,xseance.Date_Séance,xseance.Année_Lib,xseance.Groupe 
-   FROM xseance INNER JOIN v_seance ON v_seance.code_seance=xseance.id_séance WHERE xseance.id_séance=$seance";
+   FROM xseance INNER JOIN v_seance2 ON v_seance2.code_seance=xseance.id_séance WHERE xseance.id_séance=$seance";
   
     $sean =  ApiController::execute($m,$this->em);
 
@@ -780,8 +781,6 @@ public function Residanatimp(Request $request): Response
   
 }
 
-   
-
     #[Route('/excely/{element}/{from}/{to}', name: 'excely')]
     public function excely(Request $request , $element,$from,$to)
      {  
@@ -806,19 +805,17 @@ public function Residanatimp(Request $request): Response
          $sqlr="SELECT DISTINCT x_inscription_grp.code_admission as ID_ETUDIANT,x_inscription_grp.code_admission as 
                     ID_ADMISSION,x_inscription_grp.nom,x_inscription_grp.prenom,date_format(checkinout.CHECKTIME,'%Y-%m-%d') as Dat,
                     min(date_format(checkinout.CHECKTIME,'%H:%i')) as HEUREDEPOINTAGEMINIMAL,max(date_format(checkinout.CHECKTIME,'%H:%i')) as HEUREDEPOINTAGEMaximal
-                                from userinfo
-                                inner join x_inscription_grp on userinfo.street = x_inscription_grp.code_admission
-                                left join checkinout on checkinout.USERID = userinfo.USERID
-                                
-                    
-                                WHERE x_inscription_grp.code_admission='$element'
-                    
-                                AND CHECKTIME>='$from 05:00:00' and CHECKTIME<='$to 23:59:00' GROUP BY Dat";
+                from userinfo
+                inner join x_inscription_grp on userinfo.street = x_inscription_grp.code_admission
+                left join checkinout on checkinout.USERID = userinfo.USERID
+                WHERE x_inscription_grp.code_admission='$element'
+                AND CHECKTIME>='$from 05:00:00' and CHECKTIME<='$to 23:59:00' GROUP BY Dat";
  
- 
+//  dd($sqlr);
+       
        
         $resid = ApiController::execute($sqlr,$this->em);
-
+        // dd($resid);
         foreach($resid as $etudian){
         
             $sheet->setCellValue('A' . $count, $etudian->ID_ETUDIANT);
@@ -864,21 +861,16 @@ public function Residanatimp(Request $request): Response
         $count = 2;
 
         $sqlr="SELECT DISTINCT x_inscription_grp.code_admission as ID_ETUDIANT,x_inscription_grp.code_admission as 
-
-        ID_ADMISSION,x_inscription_grp.nom,x_inscription_grp.prenom,date_format(checkinout.CHECKTIME,'%Y-%m-%d') as Dat,date_format(checkinout.CHECKTIME,'%H:%i') as HEUREDEPOINTAGE
-                      from userinfo
-                      inner join x_inscription_grp on userinfo.street = x_inscription_grp.code_admission
-                      left join checkinout on checkinout.USERID = userinfo.USERID
-                     
-        
-                      WHERE x_inscription_grp.code_admission='$element'
-        
-                      AND CHECKTIME>='$from 05:00:00' and CHECKTIME<='$to 23:59:00' ";
-
-
+                ID_ADMISSION,x_inscription_grp.nom,x_inscription_grp.prenom,date_format(checkinout.CHECKTIME,'%Y-%m-%d') as Dat,date_format(checkinout.CHECKTIME,'%H:%i') as HEUREDEPOINTAGE
+            from userinfo
+            inner join x_inscription_grp on userinfo.street = x_inscription_grp.code_admission
+            left join checkinout on checkinout.USERID = userinfo.USERID
+            WHERE x_inscription_grp.code_admission='$element'
+            AND CHECKTIME>='$from 05:00:00' and CHECKTIME<='$to 23:59:00' ";
+            // dd($sqlr);
        
         $resid = ApiController::execute($sqlr,$this->em);
-
+        // dd($resid);
 
         foreach($resid as $etudian){
 
